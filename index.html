@@ -192,7 +192,7 @@
 </div>
 <div id="kacke"><div>🍋</div><div class="sauer">Saures!</div></div>
 <div id="suess" aria-hidden="true"></div>
-<div class="unten"><button class="knopf" onclick="neuesSpiel()">🔄 Neues Spiel</button><div class="version">Version <span id="version">1.0.0</span></div></div>
+<div class="unten"><button class="knopf" onclick="neuesSpiel()">🔄 Neues Spiel</button><div class="version">Version <span id="version">1.1.0</span></div></div>
 
 <div id="overlay"><div id="karte"></div></div>
 
@@ -591,11 +591,11 @@ function schatzHeben(){
       <div class="gross">🍬🍭🍫</div>
       <p class="frage">Du hast <b>${coins}</b> von ${islands.length*PER_ISLAND*10} Süßigkeiten gesammelt.</p>
       ${neu}<p>Dein Rekord: <b>${best}</b> Süßigkeiten</p>
-      <button class="knopf gruen" onclick="neuesSpiel()">🔄 Nochmal spielen</button>`);
+      <button class="knopf gruen" onclick="neuesSpiel(true)">🔄 Nochmal spielen</button>`);
 }
 
 function finish(){
-  fertig[cur]=true;drawMap();
+  fertig[cur]=true;speichern();drawMap();
   const rest=islands.length-anzahlFertig();
   showCard(`<div class="gross">✅</div><p class="frage"><b>${islands[cur].name} geschafft!</b></p>
     <p>In diesem Haus: <b>${islandCoins}</b> von ${PER_ISLAND*10} Süßigkeiten 🍬</p>
@@ -603,13 +603,30 @@ function finish(){
     <button class="knopf gruen" onclick="closeCard()">Zur Karte 🗺️</button>`);
 }
 
-function neuesSpiel(){
-  coins=0;fertig=[];closeCard();
+/* ---------- Spielstand speichern (nur auf diesem Gerät) ---------- */
+const STAND="halloweenStand";
+function speichern(){try{localStorage.setItem(STAND,JSON.stringify({fertig:islands.map((_,i)=>!!fertig[i]),coins}));}catch(e){}}
+function laden(){try{const d=JSON.parse(localStorage.getItem(STAND)||"null");
+  if(d&&Array.isArray(d.fertig)&&d.fertig.length===islands.length&&Number.isFinite(d.coins)){fertig=d.fertig;coins=d.coins;return true;}}catch(e){}return false;}
+function loeschen(){try{localStorage.removeItem(STAND);}catch(e){}}
+
+function neuesSpiel(sicher){
+  if(!sicher&&anzahlFertig()>0){
+    showCard(`<div class="gross">🔄</div><p class="frage"><b>Wirklich neu anfangen?</b></p>
+      <p>Die Haken bei ${anzahlFertig()} ${anzahlFertig()>1?"Häusern":"Haus"} und deine ${coins} Süßigkeiten werden gelöscht. Dein Rekord bleibt.</p>
+      <button class="knopf" onclick="neuesSpiel(true)">Ja, neu anfangen</button><button class="knopf gruen" onclick="closeCard()">Weiterspielen</button>`);return;}
+  coins=0;fertig=[];loeschen();closeCard();
   bx=START[0];by=START[1];
   platziereBoot();drawMap();
 }
 
+const geladen=laden();
 drawMap();platziereBoot();
+if(geladen&&anzahlFertig()>0){
+  showCard(`<div class="gross">🎃</div><p class="frage"><b>Willkommen zurück!</b></p>
+    <p>${anzahlFertig()} von ${islands.length} Häusern haben schon einen Haken ✅<br>und du hast ${coins} Süßigkeiten 🍬 gesammelt.</p>
+    <button class="knopf gruen" onclick="closeCard()">Weiterspielen</button><button class="knopf" onclick="neuesSpiel(true)">Neu anfangen</button>`);
+}
 </script>
 </body>
 </html>
