@@ -67,6 +67,12 @@
   #karte{background:#fff8e1;border:6px solid #ff9800;border-radius:20px;max-width:480px;width:100%;padding:20px;
          text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.4);max-height:95vh;overflow:auto}
   .kopf{font-weight:bold;color:#6a1b9a;font-size:1.1rem}
+  #karte{position:relative}
+  .abbruch{position:absolute;top:8px;right:8px;font-family:inherit;font-size:.85rem;font-weight:bold;color:#6a1b9a;background:#f3e5f5;
+           border:2px solid #ce93d8;border-radius:10px;padding:4px 10px;cursor:pointer}
+  .kopf{padding-right:96px}
+  .abbruchbox{background:#f3e5f5;border:3px solid #6a1b9a;border-radius:14px;padding:10px 12px 14px;margin:30px 0 12px}
+  .abbruchbox p{margin:4px 0}
   .punkte{margin:8px 0 4px;font-size:1.3rem;letter-spacing:4px}
   .frage{font-size:1.35rem;margin:14px 0;line-height:1.4}
   input{font-size:1.6rem;width:70%;max-width:240px;padding:8px;text-align:center;border:3px solid #c9a24e;
@@ -132,6 +138,7 @@
   .wahl button.richtig{background:#c8e6c9;border-color:#2e7d32}
   .wahl button.falsch{background:#ffcdd2;border-color:#c62828;text-decoration:line-through}
   .unten{text-align:center;padding-bottom:20px}
+  .version{margin-top:14px;color:#b39ddb;font-size:.8rem;letter-spacing:.04em}
   .unten button{background:#6a1b9a;color:#ffcc80;box-shadow:0 4px 0 #38006b}
 </style>
 </head>
@@ -185,7 +192,7 @@
 </div>
 <div id="kacke"><div>🍋</div><div class="sauer">Saures!</div></div>
 <div id="suess" aria-hidden="true"></div>
-<div class="unten"><button class="knopf" onclick="neuesSpiel()">🔄 Neues Spiel</button></div>
+<div class="unten"><button class="knopf" onclick="neuesSpiel()">🔄 Neues Spiel</button><div class="version">Version <span id="version">1.0.0</span></div></div>
 
 <div id="overlay"><div id="karte"></div></div>
 
@@ -278,8 +285,6 @@ const islands=[
   ()=>{const a=rnd(0,60)*10,b=a+rnd(2,30)*20,m=(a+b)/2;
        return{q:`Welche Zahl liegt genau in der Mitte?<br>${fmt(a)} &nbsp;—&nbsp; ☐ &nbsp;—&nbsp; ${fmt(b)}`,bild:strahl(a,b),a:m,e:"Stell dir den Zahlenstrahl vor: Wo ist genau die Mitte?",
        lw:strahl(a,b,m)+zeilen(`Von ${fmt(a)} bis ${fmt(b)} sind es ${fmt(b-a)}.`,`Die Hälfte davon ist ${fmt((b-a)/2)}.`,`${fmt(a)} + ${fmt((b-a)/2)} = <b>${fmt(m)}</b>`)}},
-  ()=>{const n=rnd(10000,999999),r=Math.round(n/1000)*1000;return{q:`Runde ${fmt(n)} auf Tausender.`,a:r,e:"Schau auf die Hunderterstelle: bei 0–4 abrunden, bei 5–9 aufrunden.",
-       lw:zeilen(`Hunderterziffer: ${Math.floor(n/100)%10} → ${Math.floor(n/100)%10>=5?"aufrunden":"abrunden"}`,`${fmt(n)} ≈ <b>${fmt(r)}</b>`)}}
  ]},
  {name:"Stadttor",thema:"Plus & Minus",icon:"➕",gens:[
   ()=>{const a=rnd(1000,8999),b=rnd(120,999);return{q:`Rechne schriftlich:<br>${fmt(a)} + ${b} = ?`,a:a+b,e:"Stellengerecht untereinander schreiben: Einer unter Einer, Zehner unter Zehner …",lw:schriftlich(a,b,"+")}},
@@ -288,14 +293,10 @@ const islands=[
   ()=>{const a=rnd(1200,4999),b=rnd(300,999);return{q:`Rechne schriftlich:<br>${fmt(a)} − ${b} = ?`,a:a-b,e:"Die kleinere Zahl rechtsbündig darunterschreiben. Wenn oben zu wenig ist: entbündeln.",lw:schriftlich(a,b,"-")}},
   ()=>{const t=rnd(200,650),s=rnd(80,t-60),d=rnd(2,5);return{q:`Paul macht eine Fahrradtour. Die ganze Strecke ist ${t} km lang. Nach ${d} Tagen ist er schon ${s} km gefahren. Wie viele km muss er noch fahren?`,a:t-s,e:"Ganze Strecke minus das, was er schon gefahren ist.",
        lw:zeilen(`${t} − ${s} = ${t-s}`)+schriftlich(t,s,"-")+antwort(`Paul muss noch ${t-s} km fahren.`)}},
-  ()=>{const x=rnd(1001,9999);return{q:`Wie viel fehlt von ${fmt(x)} bis 10000?`,a:10000-x,e:"Rechne 10000 minus die Zahl.",lw:schriftlich(10000,x,"-")}}
  ]},
  {name:"Römerspielplatz",thema:"Malnehmen",icon:"✖️",gens:[
   ()=>{const a=rnd(2,9),b=rnd(23,98);return{q:`${a} · ${b} = ?`,a:a*b,e:`Zerlege ${b} in Zehner und Einer.`,lw:mal2(a,b)}},
   ()=>{const a=rnd(2,9),b=pick([20,30,40,50,60,70,80,90]);return{q:`${a} · ${b} = ?`,a:a*b,e:`Denk an ${a} · ${b/10}.`,lw:zeilen(`${a} · ${b/10} = ${a*b/10}`,`${a} · ${b} = <b>${a*b}</b>`)}},
-  ()=>{const a=rnd(3,9),b=rnd(3,9);return{q:`${a} · ${b} = ?`,a:a*b,e:"Das ist das kleine Einmaleins."}},
-  ()=>{const b=rnd(112,489),a=rnd(2,6),H=Math.floor(b/100)*100,Z=Math.floor(b%100/10)*10,E=b%10;
-       return{q:`${a} · ${b} = ?`,a:a*b,e:`Zerlege ${b} in Hunderter, Zehner und Einer.`,lw:zeilen(`${a} · ${H} = ${fmt(a*H)}`,Z?`${a} · ${Z} = ${a*Z}`:"",E?`${a} · ${E} = ${a*E}`:"",`${[a*H,a*Z,a*E].filter(Boolean).map(fmt).join(" + ")} = <b>${fmt(a*b)}</b>`)}},
   ()=>{let n,k;do{n=rnd(3,8);k=rnd(3,8);}while(n===k);
        return{q:`🐧 „Ich habe ${n} Haufen mit Schneebällen gemacht. Auf jedem Haufen sind ${k} Schneebälle.“<br>Welche Rechnung passt?`,
        o:[`${n} · ${k}`,`${n} + ${k}`,`${n+1} · ${k}`,`${n} · ${k+1}`],a:0,e:"Wie viele Haufen? Wie viele auf jedem Haufen?",lw:zeilen(`${n} Haufen mit je ${k} Schneebällen:`,`<b>${n} · ${k}</b> = ${n*k}`)+sprungStrahl(n,k)}},
@@ -306,17 +307,10 @@ const islands=[
        o:[rep(k),`${n} + ${k}`,Array(n+1).fill(k).join("+"),Array(n-1).fill(k).join("+")],a:0,e:"Jeder Haufen ist ein Plus-Teil.",lw:zeilen(`${n}-mal die ${k}: <b>${rep(k)}</b> = ${n*k}`)}}
  ]},
  {name:"Katzenturm",thema:"Teilen",icon:"➗",gens:[
-  ()=>{const b=rnd(2,9),c=rnd(11,25),g=b*10,r=b*c-g;return{q:`${b*c} : ${b} = ?`,a:c,e:`Zerlege ${b*c} in zwei leichte Teile.`,lw:zeilen(`${g} : ${b} = 10`,`${r} : ${b} = ${c-10}`,`10 + ${c-10} = <b>${c}</b>`)}},
-  ()=>{const b=rnd(3,9),c=rnd(3,9);return{q:`${b*c} : ${b} = ?`,a:c,e:`Denk ans Einmaleins: ☐ · ${b} = ${b*c}`}},
-  ()=>{const b=rnd(2,9),c=rnd(3,9)*10;return{q:`${b*c} : ${b} = ?`,a:c,e:`Denk an ${b*c/10} : ${b}.`,lw:zeilen(`${b*c/10} : ${b} = ${c/10}`,`${b*c} : ${b} = <b>${c}</b>`)}},
-  ()=>{const c=rnd(2,99),z=pick([10,100]);return{q:`${fmt(c*z)} : ${z} = ?`,a:c,e:"Durch 10: eine Null weg. Durch 100: zwei Nullen weg."}},
-  ()=>{const b=rnd(3,9),c=rnd(3,9),r=rnd(1,b-1);return{q:`${b*c+r} : ${b} = ${c} Rest ☐`,a:r,e:`Wie viel ist ${c} · ${b}?`,lw:zeilen(`${c} · ${b} = ${b*c}`,`${b*c+r} − ${b*c} = <b>${r}</b>`,`${b*c+r} : ${b} = ${c} Rest ${r}`)}},
-  ()=>{const p=rnd(3,8),c=rnd(12,25);return{q:`${p} Kinder teilen nach dem Süßes-oder-Saures-Sammeln ${p*c} Bonbons gerecht auf. Wie viele bekommt jedes Kind?`,a:c,e:"Teile die Bonbons durch die Anzahl der Kinder.",
-       lw:zeilen(`${p*c} : ${p} = ${c}`)+antwort(`Jedes Kind bekommt ${c} Bonbons.`)}}
+  ()=>{let b,c;do{b=rnd(2,9);c=rnd(10,25);}while(b*c>99);const g=b*10,r=b*c-g;return{q:`${b*c} : ${b} = ?`,a:c,e:`Zerlege ${b*c} in zwei leichte Teile.`,lw:r?zeilen(`${g} : ${b} = 10`,`${r} : ${b} = ${c-10}`,`10 + ${c-10} = <b>${c}</b>`):zeilen(`${g} : ${b} = <b>10</b>`)}},
  ]},
  {name:"Freibad",thema:"Größen",icon:"⚖️",gens:[
   ()=>{const h=rnd(2,16);return{q:`Die Gartenarbeit dauert ${h*60} min. Wie viele Stunden sind das?`,a:h,e:"60 min = 1 h. Wie oft passt 60 hinein?",lw:zeilen("60 min = 1 h",`${h*60} min : 60 = ${h}`)+antwort(`Es sind ${h} h.`)}},
-  ()=>{const h=rnd(1,4),mi=pick([10,15,20,30,45,50]);return{q:`${h} h ${mi} min = ☐ min`,a:h*60+mi,e:"1 h = 60 min",lw:zeilen(`${h} h = ${h*60} min`,`${h*60} min + ${mi} min = <b>${h*60+mi} min</b>`)}},
   ()=>{const e=rnd(2,9),c=e*100+pick([-60,-40,-10,20,50,90]),stimmt=e*100>c;
        return{q:`Jemand sagt: „${e} € sind mehr als ${c} Cent.“ Stimmt das?`,o:["Ja, das stimmt.","Nein, das stimmt nicht."],a:stimmt?0:1,fest:true,e:"Rechne die Cent in Euro und Cent um.",
        lw:zeilen(`Weil: ${c} ct sind ${Math.floor(c/100)} € und ${c%100} ct.`,stimmt?`${Math.floor(c/100)} € und ${c%100} ct sind weniger als ${e} €!`:`Das ist mehr als ${e} €!`)}},
@@ -325,11 +319,6 @@ const islands=[
        return{q:"Ordne der Größe nach. Beginne mit dem Kleinsten.",o,a:0,e:"Rechne alles in die gleiche Einheit um: 1 cm = 10 mm, 1 m = 1000 mm.",lw:zeilen(inMM(l),`<b>${txt(auf)}</b>`)}},
   ()=>{const g=Math.random()<.5,l=vierLaengen().sort((a,b)=>g?b.w-a.w:a.w-b.w);
        return{q:`Welche Länge ist am <b>${g?"größten":"kleinsten"}</b>?`,o:l.map(x=>x.s),a:0,e:"Rechne alles in die gleiche Einheit um: 1 cm = 10 mm, 1 m = 1000 mm.",lw:zeilen(inMM(l))}},
-  ()=>{const m=rnd(1,9),cm=rnd(5,95);return{q:`${m} m ${cm} cm = ☐ cm`,a:m*100+cm,e:"1 m = 100 cm",lw:zeilen(`${m} m = ${m*100} cm`,`${m*100} cm + ${cm} cm = <b>${m*100+cm} cm</b>`)}},
-  ()=>{const k=rnd(1,9),g=rnd(1,19)*50;return{q:`${k} kg ${g} g = ☐ g`,a:k*1000+g,e:"1 kg = 1000 g",lw:zeilen(`${k} kg = ${fmt(k*1000)} g`,`${fmt(k*1000)} g + ${g} g = <b>${fmt(k*1000+g)} g</b>`)}},
-  ()=>{const h=rnd(8,16),m1=rnd(1,10)*5,d=rnd(4,14)*5,end=h*60+m1+d,z=`${Math.floor(end/60)}:${p2(end%60)}`;
-       return{q:`Von ${h}:${p2(m1)} Uhr bis ${z} Uhr. Wie viele Minuten sind das?`,a:d,e:"Rechne in Schritten, zum Beispiel erst bis zur vollen Stunde.",
-       lw:end%60>0&&Math.floor(end/60)>h?zeilen(`${h}:${p2(m1)} → ${h+1}:00 sind ${60-m1} min`,`${h+1}:00 → ${z} sind ${end%60} min`,`${60-m1} + ${end%60} = <b>${d} min</b>`):zeilen(`${h}:${p2(m1)} → ${z} sind <b>${d} min</b>`)}}
  ]},
  {name:"Diebsturm",thema:"Muster",icon:"🌀",gens:[
   ()=>{const s=rnd(2,7),r=[s,s*2,s*4,s*8];return{q:`Setze die Reihe fort:<br>${r.join(", ")}, ☐`,a:s*16,e:"Schreib dir die Sprünge zwischen den Zahlen auf.",lw:reihe([...r,s*16])+zeilen("Jede Zahl wird verdoppelt.")}},
@@ -358,8 +347,6 @@ const islands=[
        return{q:"Das ist ein Bauplan von oben. Jede Zahl sagt, wie viele Würfel übereinander stehen. Wie viele Würfel brauchst du insgesamt?",bild:g,a:v.reduce((a,b)=>a+b),e:"Zähle alle Zahlen im Bauplan zusammen.",lw:zeilen(`${v.join(" + ")} = <b>${v.reduce((a,b)=>a+b)}</b>`)}},
   ()=>{const a=rnd(3,8),b=rnd(2,6);let g=`<div class="gitter" style="grid-template-columns:repeat(${a},22px)">`+"<span></span>".repeat(a*b)+"</div>";
        return{q:"Aus wie vielen Kästchen besteht diese Fläche?",bild:g,a:a*b,e:"Zähle die Kästchen in einer Reihe und die Reihen.",lw:zeilen(`${b} Reihen mit je ${a} Kästchen:`,`${b} · ${a} = <b>${a*b}</b>`)}},
-  ()=>{const a=rnd(3,15),b=rnd(2,12);return{q:`Ein Rechteck ist ${a} cm lang und ${b} cm breit. Wie groß ist der Umfang in cm?`,a:2*(a+b),e:"Umfang = alle vier Seiten zusammen.",lw:zeilen(`${a} + ${b} + ${a} + ${b} = <b>${2*(a+b)} cm</b>`)}},
-  ()=>{const s=rnd(2,15);return{q:`Ein Quadrat hat einen Umfang von ${4*s} cm. Wie lang ist eine Seite in cm?`,a:s,e:"Ein Quadrat hat 4 gleich lange Seiten.",lw:zeilen(`${4*s} : 4 = <b>${s} cm</b>`)}},
   ()=>{const T={"ein Würfel":[8,12,6],"ein Quader":[8,12,6],"eine Pyramide":[5,8,5],"ein Prisma":[6,9,5],"eine Kugel":[0,0,1],"ein Zylinder":[0,2,3],"ein Kegel":[null,1,2]};
        let k,i;do{k=pick(Object.keys(T));i=rnd(0,2);}while(T[k][i]===null);const N=["Ecken","Kanten","Flächen"];
        return{q:`Wie viele ${N[i]} hat ${k}?`,a:T[k][i],e:"Stell dir den Körper vor oder nimm einen passenden Gegenstand in die Hand und zähle.",
@@ -424,7 +411,6 @@ const islands=[
        bild:`<div class="preise">Erwachsene: 3,50 €<br>Kinder: 2 €<br><b>Gruppenticket</b> (bis 12 Personen): 20 €</div>`,
        o:["Ja, das Gruppenticket ist günstiger.","Nein, Einzelkarten sind günstiger.","Beides kostet genau gleich viel."],a:lohnt?0:1,fest:true,e:"Vergiss Norbert selbst nicht! Rechne aus, was Einzelkarten kosten würden.",
        lw:zeilen(`${c} Kinder + ${e} Erwachsene${e>1?"":"r"}`,`${c} · 2 € = ${c*2} €`,`${e} · 3,50 € = ${fE(e*350)}`,`${c*2} € + ${fE(e*350)} = ${fE(sum)}`)+antwort(lohnt?`Ja, das Gruppenticket ist mit 20 € günstiger. Einzelkarten würden ${fE(sum)} kosten.`:`Nein, Einzelkarten kosten nur ${fE(sum)}. Das ist weniger als 20 €.`)}},
-  ()=>{const k=rnd(18,28),e=rnd(4,15);return{q:`${k} Kinder fahren auf Klassenfahrt. Jedes Kind zahlt ${e} €. Wie viel Euro sind das zusammen?`,a:k*e,e:"Anzahl der Kinder · Betrag.",lw:mal2(e,k).replace(/<b>|<\/b>/g,"")+zeilen(`<b>${k*e} €</b>`)+antwort(`Zusammen sind das ${k*e} €.`)}}
  ]}
 ];
 
@@ -508,7 +494,11 @@ function showTask(){
   tries=0;
   const t=tasks[taskIdx],isl=islands[cur];
   let dots="";for(let k=0;k<PER_ISLAND;k++)dots+=k<taskIdx?"🟡":k===taskIdx?"⭕":"⚪";
-  showCard(`<div class="kopf">${isl.icon} ${isl.name} – Aufgabe ${taskIdx+1} von ${PER_ISLAND}</div>
+  showCard(`<button class="abbruch" onclick="abbruchFrage(true)">✕ Abbrechen</button>
+    <div id="abbruch" class="abbruchbox" hidden><p><b>Wirklich abbrechen?</b></p>
+      <p id="abbruchtext"></p>
+      <button class="knopf" onclick="abbrechen()">Ja, zurück zur Karte</button><button class="knopf gruen" onclick="abbruchFrage(false)">Weiterspielen</button></div>
+    <div class="kopf">${isl.icon} ${isl.name} – Aufgabe ${taskIdx+1} von ${PER_ISLAND}</div>
     <div class="punkte">${dots}</div>
     <p class="frage">${t.q}</p>${t.bild||""}
     ${t.o?`<div class="wahl" id="wahl"></div>`:`<div><input id="antwort" inputmode="decimal" autocomplete="off" placeholder="?"></div>`}
@@ -527,25 +517,23 @@ function showTask(){
   setTimeout(()=>inp.focus(),50);
 }
 
+const PUNKTE=[10,5,2];  // Süßigkeiten für den 1., 2. und 3. Versuch
+const tippText=t=>t.e?`<span class="tipp">💡 Tipp: ${t.e}</span>`:"";
+function richtig(t){const plus=PUNKTE[tries]||2;coins+=plus;islandCoins+=plus;updateStats();
+  suesses(plus===10?10:plus===5?5:3);return `<span class="ok">🍬 Süßes! +${plus} Süßigkeiten</span>`;}
+
 function check(){
   const inp=document.getElementById("antwort"),fb=document.getElementById("feedback");
   if(!inp||inp.disabled)return;
   const v=parseNum(inp.value);
   if(v===null){fb.innerHTML=`<span class="nein">Bitte gib eine Zahl ein.</span>`;return;}
   const t=tasks[taskIdx];
-  if(Math.abs(v-t.a)<0.005){
-    const plus=tries===0?10:5;coins+=plus;islandCoins+=plus;updateStats();
-    suesses(plus===10?10:5);fb.innerHTML=`<span class="ok">🍬 Süßes! +${plus} Süßigkeiten</span>`;
-    inp.disabled=true;weiterKnopf(false);
-  }else if(tries===0){
-    tries=1;kacke();
-    fb.innerHTML=`<span class="nein">🍋 Saures! Versuch es nochmal!</span>${t.e?`<span class="tipp">💡 Tipp: ${t.e}</span>`:""}`;
-    inp.value="";inp.focus();
-  }else{
-    kacke();
-    fb.innerHTML=`<span class="nein">🍋 Saures! Die richtige Antwort ist ${t.d||fmt(t.a)}.</span>${t.e&&!t.lw?`<span class="tipp">💡 ${t.e}</span>`:""}`;
-    inp.disabled=true;weiterKnopf(true);
-  }
+  if(Math.abs(v-t.a)<0.005){fb.innerHTML=richtig(t);inp.disabled=true;weiterKnopf(false);return;}
+  tries++;kacke();
+  if(tries===1){fb.innerHTML=`<span class="nein">🍋 Saures! Versuch es nochmal!</span>`;inp.value="";inp.focus();}
+  else if(tries===2){fb.innerHTML=`<span class="nein">🍋 Saures! Noch ein Versuch – hier ist ein Tipp:</span>${tippText(t)}`;inp.value="";inp.focus();}
+  else{fb.innerHTML=`<span class="nein">🍋 Saures! Die richtige Antwort ist ${t.d||fmt(t.a)}.</span>${t.e&&!t.lw?`<span class="tipp">💡 ${t.e}</span>`:""}`;
+    inp.disabled=true;weiterKnopf(true);}
 }
 
 // Zahlen wie "1.234", "3,75", "45 €" oder "202 km" verstehen
@@ -561,16 +549,13 @@ function checkWahl(btn,i){
   const t=tasks[taskIdx],fb=document.getElementById("feedback");
   const alle=[...document.querySelectorAll("#wahl button")];
   const ende=z=>{alle.forEach(b=>{b.disabled=true;if(+b.dataset.i===t.a)b.classList.add("richtig");});weiterKnopf(z);};
-  if(i===t.a){
-    const plus=tries===0?10:5;coins+=plus;islandCoins+=plus;updateStats();
-    suesses(plus===10?10:5);fb.innerHTML=`<span class="ok">🍬 Süßes! +${plus} Süßigkeiten</span>`;ende(false);
-  }else if(tries===0&&t.o.length>2){
-    tries=1;kacke();btn.classList.add("falsch");btn.disabled=true;
-    fb.innerHTML=`<span class="nein">🍋 Saures! Versuch es nochmal!</span>${t.e?`<span class="tipp">💡 Tipp: ${t.e}</span>`:""}`;
-  }else{
-    kacke();btn.classList.add("falsch");
-    fb.innerHTML=`<span class="nein">🍋 Saures! Leider falsch.</span>`;ende(true);
-  }
+  if(i===t.a){fb.innerHTML=richtig(t);ende(false);return;}
+  // so viele Versuche, wie es sinnvoll ist: höchstens 3, aber nie so viele, dass nur noch die richtige Antwort übrig bleibt
+  const maxV=Math.min(3,t.o.length-1);
+  tries++;kacke();btn.classList.add("falsch");btn.disabled=true;
+  if(tries>=maxV){fb.innerHTML=`<span class="nein">🍋 Saures! Leider falsch.</span>`;ende(true);}
+  else if(tries===1){fb.innerHTML=`<span class="nein">🍋 Saures! Versuch es nochmal!</span>`;}
+  else{fb.innerHTML=`<span class="nein">🍋 Saures! Noch ein Versuch – hier ist ein Tipp:</span>${tippText(t)}`;}
 }
 
 function weiterKnopf(zeigen){
@@ -579,6 +564,10 @@ function weiterKnopf(zeigen){
   if(t.lw){const d=document.createElement("div");d.id="lw";d.className="lw";d.innerHTML=`<div class="lwtitel">So rechnest du:</div>${t.lw}`;d.hidden=!zeigen;document.getElementById("feedback").after(d);}
   document.getElementById("weiter").focus();
 }
+function abbruchFrage(an){const d=document.getElementById("abbruch");if(!d)return;
+  document.getElementById("abbruchtext").textContent=(islandCoins?`Die ${islandCoins} Süßigkeiten aus diesem Haus gehen dann verloren.`:"Du kannst das Haus später neu beginnen.")+" Das Haus bekommt noch keinen Haken.";
+  d.hidden=!an;if(an)karte.scrollTop=0;}
+function abbrechen(){coins-=islandCoins;islandCoins=0;closeCard();drawMap();}
 function lwToggle(){const d=document.getElementById("lw");if(d)d.hidden=!d.hidden;}
 
 function next(){taskIdx++;if(taskIdx<PER_ISLAND)showTask();else finish();}
