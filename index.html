@@ -3,200 +3,268 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Halloween in Heidelsheim</title>
+<title>Weihnachten in Heidelsheim</title>
 <style>
-  *{box-sizing:border-box}
-  body{margin:0;font-family:"Comic Sans MS","Trebuchet MS",Arial,sans-serif;background:#140c24;color:#222}
-  header{background:#2b1846;color:#ffcc80;padding:12px 16px;text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.3)}
-  h1{margin:0 0 6px;font-size:1.5rem}
-  .stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-size:1rem;font-weight:bold}
-  #meer{position:relative;max-width:700px;height:960px;margin:16px auto;border-radius:20px;overflow:hidden;
-        background:#1d3527;box-shadow:0 0 0 4px #ff9800,0 0 30px rgba(255,152,0,.45)}
-  #meer::after{content:"";position:absolute;inset:0;pointer-events:none;
-        background:radial-gradient(circle at 50% 3%,rgba(255,244,200,.18),transparent 35%),linear-gradient(rgba(20,10,40,.25),rgba(20,10,40,.45))}
-  .dorf{position:absolute;inset:0;width:100%;height:100%}
-  .deko{position:absolute;transform:translate(-50%,-50%);font-size:1.6rem;pointer-events:none;z-index:1}
-  .flatter{animation:flatter 2.4s ease-in-out infinite}
-  .schweb{animation:schweb 4s ease-in-out infinite;opacity:.85}
-  @keyframes flatter{50%{transform:translate(-50%,-80%) rotate(-10deg)}}
-  @keyframes schweb{50%{transform:translate(-30%,-75%)}}
-  .ortsname{position:absolute;transform:translate(-50%,-50%);color:#bbdefb;font-style:italic;font-size:.9rem;pointer-events:none;z-index:1}
-  .insel{position:absolute;transform:translate(-50%,-50%);width:112px;border:none;background:none;z-index:3;
-         cursor:pointer;text-align:center;font-family:inherit;padding:0}
-  .insel .land{display:block;font-size:2rem;width:72px;height:58px;line-height:54px;margin:28px auto 0;border-radius:4px;
-         background:radial-gradient(circle,#fff3c4,#ffb74d 80%);border:4px solid #4e342e;box-shadow:0 0 22px rgba(255,167,38,.7)}
-  .insel .land::before{content:"";position:absolute;left:-10px;right:-10px;top:-30px;height:30px;background:#6d2f1b;
-         clip-path:polygon(50% 0,100% 100%,0 100%)}
-  .insel .land::after{content:"🎃";position:absolute;left:-14px;bottom:-8px;font-size:1.1rem;line-height:1;text-shadow:none}
-  .insel .name{display:inline-block;margin-top:6px;background:rgba(43,24,70,.92);color:#ffcc80;border:1px solid #ff9800;border-radius:10px;
-         padding:2px 8px;font-size:.8rem;font-weight:bold;line-height:1.25}
-  .insel .name small{display:block;font-weight:normal;color:#e1bee7;font-size:.72rem}
-  .insel .land{position:relative}
-  .haken{position:absolute;right:-14px;top:-40px;font-size:1.6rem;line-height:1;text-shadow:none}
-  .schatz{position:absolute;transform:translate(-50%,-50%);width:124px;border:none;background:none;cursor:pointer;text-align:center;font-family:inherit;padding:0;z-index:3}
-  .schatz .truhe{position:relative;display:block;font-size:3rem;width:84px;height:84px;line-height:80px;margin:0 auto;border-radius:50%;
-         background:#3e2723;border:4px solid #1b0f0b;box-shadow:0 4px 0 #120806;filter:grayscale(.4)}
-  .schatz .schloss{position:absolute;right:-6px;bottom:-6px;font-size:1.5rem;line-height:1}
-  .schatz .name{display:inline-block;margin-top:4px;background:rgba(43,24,70,.92);color:#ffcc80;border:1px solid #ff9800;border-radius:10px;padding:2px 8px;font-size:.8rem;font-weight:bold}
-  .schatz.offen .truhe{background:#ff9800;border-color:#ffe082;box-shadow:0 0 30px #ffb300,0 4px 0 #e65100;filter:none;animation:puls 1.2s infinite}
-  .fehlt{line-height:1.7;font-weight:bold}
-  .insel.fertig .land{border-color:#66bb6a;box-shadow:0 0 22px rgba(102,187,106,.8),inset 0 0 14px rgba(255,235,59,.6)}
-  .insel.fertig .land::before{background:#2e7d32}
-  @keyframes puls{50%{transform:scale(1.12)}}
-  #boot{position:absolute;font-size:3.2rem;line-height:1;transform:translate(-50%,-50%);pointer-events:none;z-index:4;transition:left 1s ease,top 1s ease;
-        filter:drop-shadow(0 3px 2px rgba(0,0,0,.35))}
-  #boot.links{transform:translate(-50%,-50%) scaleX(-1)}
-  #boot span{display:inline-block;filter:drop-shadow(0 0 10px #ffeb3b) drop-shadow(0 0 4px #ff9800);animation:huepf .5s ease-in-out infinite alternate}
-  @keyframes huepf{to{transform:translateY(-8px)}}
-  .hinweis{text-align:center;color:#e1bee7;margin:0 16px;font-size:1rem}
-  #kacke{position:fixed;left:50%;top:50%;font-size:10rem;line-height:1;text-align:center;transform:translate(-50%,-50%) scale(0);
-         pointer-events:none;z-index:30;opacity:0}
-  #kacke .sauer{font-size:3.2rem;font-weight:bold;color:#c6ff00;-webkit-text-stroke:2px #33691e;text-shadow:0 4px 0 #33691e}
-  #suess{position:fixed;inset:0;pointer-events:none;z-index:31;overflow:hidden}
-  #suess span{position:absolute;top:-60px;font-size:2.6rem;animation:regen 1.6s ease-in forwards}
-  @keyframes regen{to{transform:translateY(110vh) rotate(540deg)}}
-  #kacke.zeigen{animation:kacke 1.3s ease forwards}
-  @keyframes kacke{
-    0%{transform:translate(-50%,-50%) scale(0) rotate(0);opacity:1}
-    25%{transform:translate(-50%,-50%) scale(1.3) rotate(-12deg);opacity:1}
-    45%{transform:translate(-50%,-50%) scale(1) rotate(10deg)}
-    65%{transform:translate(-50%,-50%) scale(1.1) rotate(-6deg);opacity:1}
-    100%{transform:translate(-50%,-50%) scale(1.1) rotate(0);opacity:0}}
-  #overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;
-           padding:16px;z-index:10}
-  #karte{background:#fff8e1;border:6px solid #ff9800;border-radius:20px;max-width:480px;width:100%;padding:20px;
-         text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.4);max-height:95vh;overflow:auto}
-  .kopf{font-weight:bold;color:#6a1b9a;font-size:1.1rem}
-  #karte{position:relative}
-  .abbruch{position:absolute;top:8px;right:8px;font-family:inherit;font-size:.85rem;font-weight:bold;color:#6a1b9a;background:#f3e5f5;
-           border:2px solid #ce93d8;border-radius:10px;padding:4px 10px;cursor:pointer}
-  .kopf{padding-right:96px}
-  .abbruchbox{background:#f3e5f5;border:3px solid #6a1b9a;border-radius:14px;padding:10px 12px 14px;margin:30px 0 12px}
-  .abbruchbox p{margin:4px 0}
-  .punkte{margin:8px 0 4px;font-size:1.3rem;letter-spacing:4px}
-  .frage{font-size:1.35rem;margin:14px 0;line-height:1.4}
-  input{font-size:1.6rem;width:70%;max-width:240px;padding:8px;text-align:center;border:3px solid #c9a24e;
-        border-radius:12px;font-family:inherit}
-  button.knopf{font-family:inherit;font-size:1.15rem;font-weight:bold;padding:10px 22px;margin:12px 6px 0;border:none;
-        border-radius:14px;background:#ff9800;color:#fff;cursor:pointer;box-shadow:0 4px 0 #b26a00}
-  button.knopf:active{transform:translateY(3px);box-shadow:0 1px 0 #b26a00}
-  button.gruen{background:#43a047;box-shadow:0 4px 0 #1b5e20}
-  #feedback{min-height:1.5em;font-size:1.1rem;margin:12px 0 0}
-  .ok{color:#2e7d32;font-weight:bold}.nein{color:#c62828;font-weight:bold}
-  .tipp{color:#5d4037;font-size:.95rem;display:block;margin-top:6px}
-  .gitter{display:inline-grid;gap:2px;margin:4px auto 10px;background:#8d6e2f;padding:2px;border-radius:4px}
-  .gitter span{width:22px;height:22px;background:#ffe082}
-  .gross{font-size:4rem;margin:6px 0}
-  .karten{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}
-  .karten span{min-width:46px;padding:8px 6px;border:3px solid #5d4037;border-radius:8px;background:#fff;font-size:1.4rem;font-weight:bold}
-  .summe{font-size:1.2rem;font-weight:bold;margin-bottom:8px}
-  .bauplan{display:inline-grid;gap:0;border:3px solid #5d4037;margin-top:4px}
-  .bauplan span{width:38px;height:38px;line-height:34px;border:1px solid #5d4037;background:#fff;font-size:1.3rem;font-weight:bold}
-  .vorne{font-size:.95rem;color:#5d4037;margin-bottom:8px}
-  .preise{display:inline-block;text-align:left;background:#eceff1;border:2px solid #90a4ae;border-radius:12px;padding:8px 14px;margin-bottom:8px;line-height:1.5}
-  .sack{display:flex;flex-direction:column;align-items:center;margin:4px auto 10px}
-  .sack .knoten{width:30px;height:16px;background:#d7ccc8;border:3px solid #5d4037;border-radius:8px 8px 3px 3px;margin-bottom:-3px}
-  .sack .beutel{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-content:center;width:150px;min-height:110px;padding:14px;background:#efebe9;border:3px solid #5d4037;border-radius:40% 40% 30% 30%}
-  .sack i{width:20px;height:20px;border-radius:50%;border:2px solid #333}
-  .raeder{display:flex;gap:24px;justify-content:center;margin-bottom:8px}
-  .tab{border-collapse:collapse;margin:4px auto 10px;font-size:1.05rem}
-  .tab th,.tab td{border:2px solid #8d6e2f;padding:4px 12px;background:#fff}
-  .tab th{background:#ffe082}
-  .dia{display:flex;gap:6px;justify-content:center;margin-top:6px}
-  .yachse{position:relative;width:24px;font-size:.85rem}
-  .yachse span{position:absolute;right:2px}
-  .flaeche{display:flex;align-items:flex-end;gap:14px;padding:0 10px;border-left:2px solid #333;border-bottom:2px solid #333;
-           background-image:linear-gradient(to top,#cfd8dc 1px,transparent 1px);background-position:bottom}
-  .saeule{width:38px;background:#ff9800;border:2px solid #b26a00;border-bottom:none}
-  .xlab{display:flex;gap:14px;justify-content:center;padding-left:40px;margin-bottom:8px}
-  .xlab span{width:38px;font-size:.75rem;text-align:center}
-  .netze{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:8px}
-  .netze figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}
-  .netze figcaption{font-weight:bold}
-  .wahl.zeile{grid-template-columns:repeat(auto-fit,minmax(60px,1fr))}
-  [hidden]{display:none!important}
-  @media (prefers-reduced-motion:reduce){.flatter,.schweb,.schatz.offen .truhe,#boot span{animation:none}}
-  button.blau{background:#1565c0;box-shadow:0 4px 0 #0d47a1}
-  .lw{background:#fff;border:2px dashed #1565c0;border-radius:12px;padding:10px;margin-top:12px;color:#0d47a1;overflow-x:auto}
-  .lwtitel{font-weight:bold;margin-bottom:6px}
-  .lwz{display:flex;flex-direction:column;gap:3px;font-size:1.1rem;margin:4px 0}
-  .as{margin-top:8px;font-size:1.05rem;border-top:1px solid #90caf9;padding-top:6px}
-  .kp{display:inline-grid;grid-auto-rows:26px;margin:6px auto;border-left:1px solid #b0bec5;border-top:1px solid #b0bec5}
-  .kp span{border-right:1px solid #b0bec5;border-bottom:1px solid #b0bec5;font-size:1.15rem;line-height:25px;text-align:center;color:#0d47a1}
-  .kp span.kl{font-size:.7rem;line-height:25px;color:#c62828}
-  .kp span.kr{border-radius:50%;outline:2px solid #c62828;outline-offset:-3px}
-  .kp span.erg{border-top:2px solid #0d47a1;font-weight:bold}
-  .reihe{display:flex;align-items:flex-end;justify-content:center;flex-wrap:nowrap;gap:1px;margin:6px 0;font-size:1rem;white-space:nowrap}
-  .reihe b{padding:0 2px}
-  .sp{display:inline-flex;flex-direction:column;align-items:center;color:#1565c0;font-size:.75rem;margin-bottom:14px}
-  .sp i{width:20px;height:8px;border:2px solid #1565c0;border-bottom:none;border-radius:12px 12px 0 0}
-  .strahl{max-width:100%;height:auto;margin:4px auto 8px;display:block}
-  .strahl text{font-size:13px;font-family:inherit}
-  .wahl{display:grid;gap:8px;margin-top:6px}
-  .wahl button{font-family:inherit;font-size:1.15rem;padding:10px;border:3px solid #c9a24e;border-radius:12px;background:#fff;cursor:pointer}
-  .wahl button:disabled{cursor:default}
-  .wahl button.richtig{background:#c8e6c9;border-color:#2e7d32}
-  .wahl button.falsch{background:#ffcdd2;border-color:#c62828;text-decoration:line-through}
-  .unten{text-align:center;padding-bottom:20px}
-  .version{margin-top:14px;color:#b39ddb;font-size:.8rem;letter-spacing:.04em}
-  .unten button{background:#6a1b9a;color:#ffcc80;box-shadow:0 4px 0 #38006b}
+/* =====================================================================
+   1. Farben (Weihnachtsnacht im Schnee)
+   ===================================================================== */
+:root{
+  --nacht:#0d1b2a; --nacht-hell:#1b2f45;
+  --rot:#c62828; --rot-dunkel:#7f0000; --rot-schild:rgba(127,15,22,.93);
+  --gold:#f4c542; --gold-hell:#ffe9a8;
+  --gruen:#2e7d32; --gruen-dunkel:#1b5e20;
+  --schnee:#e3ebf4; --eis:#5b8fc7;
+  --papier:#fffaf0; --tinte:#222; --blau:#1565c0; --blau-dunkel:#0d47a1;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Comic Sans MS","Trebuchet MS",Arial,sans-serif;background:var(--nacht);color:var(--tinte)}
+[hidden]{display:none!important}
+
+/* =====================================================================
+   2. Kopf, Hinweis, Fuß
+   ===================================================================== */
+header{background:linear-gradient(var(--rot),var(--rot-dunkel));color:var(--gold-hell);padding:12px 16px;text-align:center;
+       box-shadow:0 3px 8px rgba(0,0,0,.4);border-bottom:4px solid var(--gold)}
+h1{margin:0 0 6px;font-size:1.5rem}
+.stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-size:1rem;font-weight:bold}
+.hinweis{text-align:center;color:#cfe3f7;margin:12px 16px 0;font-size:1rem;line-height:1.4}
+.unten{text-align:center;padding-bottom:20px}
+.unten .knopf{background:var(--gruen);box-shadow:0 4px 0 var(--gruen-dunkel)}
+.version{margin-top:14px;color:#8fa9c4;font-size:.8rem;letter-spacing:.04em}
+
+/* =====================================================================
+   3. Dorfkarte von Heidelsheim (vereinfacht, verschneit)
+   ===================================================================== */
+#dorf{position:relative;max-width:700px;height:960px;margin:16px auto;border-radius:20px;overflow:hidden;background:var(--schnee);
+      box-shadow:0 0 0 4px var(--gold),0 0 30px rgba(244,197,66,.45)}
+#dorf::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:2;
+      background:radial-gradient(circle at 50% 2%,rgba(255,250,210,.35),transparent 30%),linear-gradient(rgba(13,27,42,.10),rgba(13,27,42,.30))}
+.dorfbild{position:absolute;inset:0;width:100%;height:100%}
+.deko{position:absolute;transform:translate(-50%,-50%);font-size:1.6rem;pointer-events:none;z-index:1}
+.wackel{animation:wackel 3s ease-in-out infinite}
+@keyframes wackel{50%{transform:translate(-50%,-50%) rotate(8deg)}}
+.ortsname{position:absolute;transform:translate(-50%,-50%);color:#1f4e79;font-style:italic;font-size:.9rem;pointer-events:none;z-index:1}
+.flocke{position:absolute;top:-24px;color:#fff;text-shadow:0 0 3px #9cb8d6;pointer-events:none;z-index:2;animation:fallen linear infinite}
+@keyframes fallen{to{transform:translate(30px,1000px) rotate(360deg)}}
+
+/* Häuser mit Schneedach, Lichtern und Tannenbäumchen */
+.haus{position:absolute;transform:translate(-50%,-50%);width:112px;border:none;background:none;z-index:3;cursor:pointer;text-align:center;font-family:inherit;padding:0}
+.gebaeude{position:relative;display:block;font-size:2rem;width:72px;height:58px;line-height:54px;margin:32px auto 0;border-radius:4px;
+          background:radial-gradient(circle,#fff6d5,#ffd27a 80%);border:4px solid #5d4037;box-shadow:0 0 22px rgba(255,214,102,.85)}
+.gebaeude::before{content:"";position:absolute;left:-12px;right:-12px;top:-34px;height:34px;
+          background:linear-gradient(#fff 0 40%,var(--rot) 40%);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.gebaeude::after{content:"🎄";position:absolute;left:-16px;bottom:-8px;font-size:1.15rem;line-height:1}
+.haus.fertig .gebaeude{border-color:var(--gruen);box-shadow:0 0 24px rgba(102,187,106,.95)}
+.haus.fertig .gebaeude::before{background:linear-gradient(#fff 0 40%,var(--gruen) 40%)}
+.haken{position:absolute;right:-14px;top:-42px;font-size:1.6rem;line-height:1}
+.schild{display:inline-block;margin-top:6px;background:var(--rot-schild);color:var(--gold-hell);border:1px solid var(--gold);border-radius:10px;
+        padding:2px 8px;font-size:.8rem;font-weight:bold;line-height:1.25}
+.schild small{display:block;font-weight:normal;color:#fff;opacity:.85;font-size:.72rem}
+.haus:focus-visible,.baum:focus-visible{outline:3px solid var(--gold);outline-offset:4px;border-radius:12px}
+
+/* Weihnachtsbaum am Marktplatz */
+.baum{position:absolute;transform:translate(-50%,-50%);width:130px;border:none;background:none;cursor:pointer;text-align:center;font-family:inherit;padding:0;z-index:3}
+.tanne{position:relative;display:block;font-size:3.4rem;width:92px;height:92px;line-height:88px;margin:0 auto;border-radius:50%;
+       background:rgba(255,255,255,.55);border:4px solid #fff;filter:saturate(.45)}
+.schloss{position:absolute;right:-6px;bottom:-6px;font-size:1.5rem;line-height:1}
+.baum.offen .tanne{filter:none;background:radial-gradient(circle,#fff8d0,var(--gold));border-color:var(--gold-hell);
+       box-shadow:0 0 34px var(--gold);animation:puls 1.2s infinite}
+@keyframes puls{50%{transform:scale(1.1)}}
+
+/* Spielfigur */
+#figur{position:absolute;font-size:3.2rem;line-height:1;transform:translate(-50%,-50%);pointer-events:none;z-index:4;transition:left 1s ease,top 1s ease}
+#figur.links{transform:translate(-50%,-50%) scaleX(-1)}
+#figur span{display:inline-block;filter:drop-shadow(0 0 8px #fff) drop-shadow(0 2px 2px rgba(0,0,0,.4));animation:huepf .5s ease-in-out infinite alternate}
+@keyframes huepf{to{transform:translateY(-8px)}}
+
+/* =====================================================================
+   4. Effekte: Plätzchen-Regen und Kohle
+   ===================================================================== */
+#regen{position:fixed;inset:0;pointer-events:none;z-index:31;overflow:hidden}
+#regen span{position:absolute;top:-60px;font-size:2.6rem;animation:regen 1.6s ease-in forwards}
+@keyframes regen{to{transform:translateY(110vh) rotate(540deg)}}
+#kohle{position:fixed;left:50%;top:50%;font-size:9rem;line-height:1;text-align:center;transform:translate(-50%,-50%) scale(0);pointer-events:none;z-index:30;opacity:0}
+#kohle .kohletext{font-size:3rem;font-weight:bold;color:#fff;-webkit-text-stroke:2px #212121;text-shadow:0 4px 0 #212121}
+#kohle.zeigen{animation:kohle 1.3s ease forwards}
+@keyframes kohle{
+  0%{transform:translate(-50%,-50%) scale(0) rotate(0);opacity:1}
+  25%{transform:translate(-50%,-50%) scale(1.3) rotate(-12deg);opacity:1}
+  45%{transform:translate(-50%,-50%) scale(1) rotate(10deg)}
+  65%{transform:translate(-50%,-50%) scale(1.1) rotate(-6deg);opacity:1}
+  100%{transform:translate(-50%,-50%) scale(1.1) rotate(0);opacity:0}}
+
+/* =====================================================================
+   5. Karte (Dialogfenster) und Knöpfe
+   ===================================================================== */
+#overlay{position:fixed;inset:0;background:rgba(5,12,20,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:10}
+#karte{position:relative;background:var(--papier);border:6px solid var(--gold);border-radius:20px;max-width:480px;width:100%;padding:20px;
+       text-align:center;box-shadow:0 10px 30px rgba(0,0,0,.5);max-height:95vh;overflow:auto}
+.kopf{font-weight:bold;color:var(--rot);font-size:1.1rem;padding-right:96px}
+.kopf.mitte{padding-right:0}
+.gross{font-size:4rem;margin:6px 0}
+.frage{font-size:1.35rem;margin:14px 0;line-height:1.4}
+.fehlt{line-height:1.7;font-weight:bold}
+.punkte{margin:8px 0 4px;font-size:1.3rem;letter-spacing:4px}
+input{font-size:1.6rem;width:70%;max-width:240px;padding:8px;text-align:center;border:3px solid #c9a24e;border-radius:12px;font-family:inherit;background:#fff;color:var(--tinte)}
+button.knopf{font-family:inherit;font-size:1.15rem;font-weight:bold;padding:10px 22px;margin:12px 6px 0;border:none;border-radius:14px;
+             background:var(--rot);color:#fff;cursor:pointer;box-shadow:0 4px 0 var(--rot-dunkel)}
+button.knopf:active{transform:translateY(3px);box-shadow:0 1px 0 var(--rot-dunkel)}
+button.gruen{background:var(--gruen);box-shadow:0 4px 0 var(--gruen-dunkel)}
+button.blau{background:var(--blau);box-shadow:0 4px 0 var(--blau-dunkel)}
+button.grau{background:#78909c;box-shadow:0 4px 0 #455a64;font-size:1rem}
+.abbruch{position:absolute;top:8px;right:8px;font-family:inherit;font-size:.85rem;font-weight:bold;color:var(--rot);background:#ffebee;
+         border:2px solid #ef9a9a;border-radius:10px;padding:4px 10px;cursor:pointer}
+.abbruchbox{background:#ffebee;border:3px solid var(--rot);border-radius:14px;padding:10px 12px 14px;margin:30px 0 12px}
+.abbruchbox p{margin:4px 0}
+#feedback{min-height:1.5em;font-size:1.1rem;margin:12px 0 0}
+.ok{color:var(--gruen);font-weight:bold}.nein{color:var(--rot);font-weight:bold}
+.tipp{color:#5d4037;font-size:.95rem;display:block;margin-top:6px}
+.wahl{display:grid;gap:8px;margin-top:6px}
+.wahl button{font-family:inherit;font-size:1.15rem;padding:10px;border:3px solid #c9a24e;border-radius:12px;background:#fff;color:var(--tinte);cursor:pointer}
+.wahl button:disabled{cursor:default}
+.wahl button.richtig{background:#c8e6c9;border-color:var(--gruen)}
+.wahl button.falsch{background:#ffcdd2;border-color:var(--rot);text-decoration:line-through}
+
+/* =====================================================================
+   6. Aufgaben-Darstellungen und Lösungswege (wie in der Musterlösung)
+   ===================================================================== */
+.gitter{display:inline-grid;gap:2px;margin:4px auto 10px;background:#8d6e2f;padding:2px;border-radius:4px}
+.gitter span{width:22px;height:22px;background:#ffe082}
+.karten{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px 0}
+.karten span{min-width:46px;padding:8px 6px;border:3px solid #5d4037;border-radius:8px;background:#fff;font-size:1.4rem;font-weight:bold}
+.summe{font-size:1.2rem;font-weight:bold;margin-bottom:8px}
+.bauplan{display:inline-grid;gap:0;border:3px solid #5d4037;margin-top:4px}
+.bauplan span{width:38px;height:38px;line-height:34px;border:1px solid #5d4037;background:#fff;font-size:1.3rem;font-weight:bold}
+.vorne{font-size:.95rem;color:#5d4037;margin-bottom:8px}
+.preise{display:inline-block;text-align:left;background:#eceff1;border:2px solid #90a4ae;border-radius:12px;padding:8px 14px;margin-bottom:8px;line-height:1.5}
+.sack{display:flex;flex-direction:column;align-items:center;margin:4px auto 10px}
+.sack .knoten{width:30px;height:16px;background:#d7ccc8;border:3px solid #5d4037;border-radius:8px 8px 3px 3px;margin-bottom:-3px}
+.sack .beutel{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-content:center;width:150px;min-height:110px;padding:14px;background:#efebe9;border:3px solid #5d4037;border-radius:40% 40% 30% 30%}
+.sack i{width:20px;height:20px;border-radius:50%;border:2px solid #333}
+.raeder{display:flex;gap:24px;justify-content:center;margin-bottom:8px}
+.tab{border-collapse:collapse;margin:4px auto 10px;font-size:1.05rem}
+.tab th,.tab td{border:2px solid #8d6e2f;padding:4px 12px;background:#fff}
+.tab th{background:#ffe082}
+.dia{display:flex;gap:6px;justify-content:center;margin-top:6px}
+.yachse{position:relative;width:24px;font-size:.85rem}
+.yachse span{position:absolute;right:2px}
+.flaeche{display:flex;align-items:flex-end;gap:14px;padding:0 10px;border-left:2px solid #333;border-bottom:2px solid #333;
+         background-image:linear-gradient(to top,#cfd8dc 1px,transparent 1px);background-position:bottom}
+.saeule{width:38px;background:#ef5350;border:2px solid #b71c1c;border-bottom:none}
+.xlab{display:flex;gap:14px;justify-content:center;padding-left:40px;margin-bottom:8px}
+.xlab span{width:38px;font-size:.75rem;text-align:center}
+.netze{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-bottom:8px}
+.netze figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:2px}
+.netze figcaption{font-weight:bold}
+.strahl{max-width:100%;height:auto;margin:4px auto 8px;display:block}
+.strahl text{font-size:13px;font-family:inherit}
+.lw{background:#fff;border:2px dashed var(--blau);border-radius:12px;padding:10px;margin-top:12px;color:var(--blau-dunkel);overflow-x:auto}
+.lwtitel{font-weight:bold;margin-bottom:6px}
+.lwz{display:flex;flex-direction:column;gap:3px;font-size:1.1rem;margin:4px 0}
+.as{margin-top:8px;font-size:1.05rem;border-top:1px solid #90caf9;padding-top:6px}
+.kp{display:inline-grid;grid-auto-rows:26px;margin:6px auto;border-left:1px solid #b0bec5;border-top:1px solid #b0bec5}
+.kp span{border-right:1px solid #b0bec5;border-bottom:1px solid #b0bec5;font-size:1.15rem;line-height:25px;text-align:center;color:var(--blau-dunkel)}
+.kp span.kl{font-size:.7rem;line-height:25px;color:var(--rot)}
+.kp span.kr{border-radius:50%;outline:2px solid var(--rot);outline-offset:-3px}
+.kp span.erg{border-top:2px solid var(--blau-dunkel);font-weight:bold}
+.reihe{display:flex;align-items:flex-end;justify-content:center;flex-wrap:nowrap;gap:1px;margin:6px 0;font-size:1rem;white-space:nowrap}
+.reihe b{padding:0 2px}
+.sp{display:inline-flex;flex-direction:column;align-items:center;color:var(--blau);font-size:.75rem;margin-bottom:14px}
+.sp i{width:20px;height:8px;border:2px solid var(--blau);border-bottom:none;border-radius:12px 12px 0 0}
+
+/* =====================================================================
+   7. Minispiele
+   ===================================================================== */
+.anleitung{font-size:1rem;line-height:1.4;margin:10px 0}
+.miniinfo{font-weight:bold;font-size:1.15rem;margin:8px 0;min-height:1.4em;color:var(--rot)}
+.mini{margin:0 auto;user-select:none;-webkit-user-select:none}
+/* Geschenke fangen */
+.mini.feld{position:relative;width:100%;max-width:340px;height:300px;border-radius:14px;overflow:hidden;touch-action:none;
+           background:linear-gradient(#1b2f45,#3c5a7d 70%,#e3ebf4 70%);border:3px solid var(--gold)}
+.feld .schlitten{position:absolute;top:84%;font-size:2.6rem;transform:translate(-50%,-50%);line-height:1}
+.feld .faellt{position:absolute;font-size:1.9rem;transform:translate(-50%,-50%);line-height:1}
+/* Rentiere auf dem Dach */
+.mini.dach{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:320px}
+.loch{position:relative;height:84px;border:none;border-radius:10px;background:linear-gradient(#fff 0 22%,#b71c1c 22%);cursor:pointer;font-size:2.4rem;overflow:hidden;font-family:inherit}
+.loch span{display:block;transform:translateY(80px);transition:transform .15s}
+.loch.da span{transform:translateY(4px)}
+.loch.treffer{background:linear-gradient(#fff 0 22%,var(--gruen) 22%)}
+/* Memory */
+.mini.memory{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:340px}
+.mk{height:72px;border:3px solid var(--gold);border-radius:12px;cursor:pointer;font-size:2.2rem;font-family:inherit;
+    background:repeating-linear-gradient(45deg,#c62828 0 10px,#e53935 10px 20px)}
+.mk span{visibility:hidden}
+.mk.auf{background:#fff}
+.mk.auf span{visibility:visible}
+.mk.paar{background:#c8e6c9;border-color:var(--gruen)}
+/* Glocken-Melodie */
+.mini.glocken{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;max-width:280px}
+.glocke{height:96px;border:4px solid #fff;border-radius:18px;background:var(--f);font-size:2.6rem;cursor:pointer;opacity:.55;transition:opacity .1s,transform .1s}
+.glocke.leucht{opacity:1;transform:scale(1.08);box-shadow:0 0 22px var(--f)}
+
+@media (prefers-reduced-motion:reduce){
+  .flocke,.wackel,.baum.offen .tanne,#figur span{animation:none}
+  .flocke{display:none}
+}
 </style>
 </head>
 <body>
 <header>
-  <h1>🎃 Halloween in Heidelsheim 👻</h1>
+  <h1>🎄 Weihnachten in Heidelsheim ⭐</h1>
   <div class="stats">
-    <span>🍬 Süßigkeiten: <span id="coins">0</span></span>
-    <span>🏠 Häuser: <span id="inseln">0</span>/<span id="gesamt">9</span></span>
-    <span>🏆 Rekord: <span id="best">0</span></span>
+    <span>🍪 Plätzchen: <span id="plaetzchen">0</span></span>
+    <span>🏠 Häuser: <span id="haeuser">0</span>/<span id="gesamt">9</span></span>
+    <span>🏆 Rekord: <span id="rekord">0</span></span>
   </div>
 </header>
 
-<p class="hinweis" style="margin-top:12px">🎃 Tippe auf ein Haus, dann hüpft dein Kürbis hin. Süßes oder Saures? Hat jedes Haus einen Haken ✅, öffnet sich der große Kürbis-Kessel am Marktplatz!</p>
-<div id="meer">
-  <svg class="dorf" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-    <rect width="100" height="100" fill="#1d3527"/>
-    <rect x="0" y="0" width="12" height="18" fill="#26422e"/><rect x="88" y="16" width="12" height="20" fill="#2c4a2c"/>
-    <rect x="0" y="80" width="14" height="20" fill="#2c4a2c"/><rect x="86" y="84" width="14" height="16" fill="#26422e"/>
-    <!-- Gässchen -->
-    <g fill="none" stroke="#6b5e4f" stroke-linecap="round" vector-effect="non-scaling-stroke">
+<p class="hinweis">🎅 Tippe auf ein Haus, dann stapft der Weihnachtsmann hin. Richtige Antworten bringen Plätzchen 🍪, falsche nur Kohle 🪨. Nach jedem Haus wartet ein Minispiel! Hat jedes Haus einen Haken ✅, darfst du am Weihnachtsbaum die Geschenke auspacken.</p>
+
+<div id="dorf">
+  <svg class="dorfbild" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+    <rect width="100" height="100" fill="#e3ebf4"/>
+    <rect x="0" y="0" width="12" height="18" fill="#f2f6fb"/><rect x="88" y="16" width="12" height="20" fill="#f2f6fb"/>
+    <rect x="0" y="80" width="14" height="20" fill="#f2f6fb"/><rect x="86" y="84" width="14" height="16" fill="#f2f6fb"/>
+    <!-- geräumte Gassen -->
+    <g fill="none" stroke="#9aa8b6" stroke-linecap="round">
       <path d="M50 0 L50 100" stroke-width="16" vector-effect="non-scaling-stroke"/>
       <path d="M14 8 Q50 13 86 9" stroke-width="10" vector-effect="non-scaling-stroke"/>
       <path d="M12 26 Q50 22 88 28" stroke-width="10" vector-effect="non-scaling-stroke"/>
       <path d="M10 43 L90 45" stroke-width="12" vector-effect="non-scaling-stroke"/>
       <path d="M16 75 Q50 69 84 77" stroke-width="10" vector-effect="non-scaling-stroke"/>
-      <path d="M50 84 L50 92" stroke-width="10" vector-effect="non-scaling-stroke"/>
     </g>
-    <g fill="none" stroke="#8a7a66" stroke-dasharray="2 5" vector-effect="non-scaling-stroke">
-      <path d="M50 0 L50 100" stroke-width="2" vector-effect="non-scaling-stroke"/>
-    </g>
-    <!-- Saalbach -->
-    <path d="M0 57 Q20 52 38 59 T70 60 T100 56" fill="none" stroke="#1e4f8f" stroke-width="22" vector-effect="non-scaling-stroke"/>
-    <path d="M0 57 Q20 52 38 59 T70 60 T100 56" fill="none" stroke="#3d7fd1" stroke-width="10" stroke-dasharray="6 10" vector-effect="non-scaling-stroke"/>
+    <path d="M50 0 L50 100" fill="none" stroke="#c3ccd6" stroke-width="2" stroke-dasharray="2 5" vector-effect="non-scaling-stroke"/>
+    <!-- Saalbach mit Eisschollen -->
+    <path d="M0 57 Q20 52 38 59 T70 60 T100 56" fill="none" stroke="#5b8fc7" stroke-width="22" vector-effect="non-scaling-stroke"/>
+    <path d="M0 57 Q20 52 38 59 T70 60 T100 56" fill="none" stroke="#d7e9f7" stroke-width="8" stroke-dasharray="5 14" vector-effect="non-scaling-stroke"/>
     <!-- Brücke -->
-    <rect x="46" y="55.4" width="8" height="5.4" fill="#7b6650" stroke="#3e2f22" stroke-width="2" vector-effect="non-scaling-stroke"/>
+    <rect x="46" y="55.4" width="8" height="5.4" fill="#8d6e63" stroke="#4e342e" stroke-width="2" vector-effect="non-scaling-stroke"/>
     <!-- Marktplatz -->
-    <ellipse cx="50" cy="44" rx="17" ry="7.5" fill="#7d6c58" stroke="#4e4033" stroke-width="3" vector-effect="non-scaling-stroke"/>
-    <ellipse cx="50" cy="44" rx="17" ry="7.5" fill="none" stroke="#8f7d68" stroke-width="1" stroke-dasharray="3 4" vector-effect="non-scaling-stroke" transform="translate(50 44) scale(.8) translate(-50 -44)"/>
+    <ellipse cx="50" cy="44" rx="17" ry="7.5" fill="#c5ced8" stroke="#8a96a3" stroke-width="3" vector-effect="non-scaling-stroke"/>
   </svg>
-  <div class="deko" style="left:50%;top:3%;font-size:3rem">🌕</div>
-  <div class="deko flatter" style="left:34%;top:15%">🦇</div><div class="deko flatter" style="left:63%;top:31%;animation-delay:.7s">🦇</div><div class="deko flatter" style="left:38%;top:67%;animation-delay:1.3s">🦇</div>
-  <div class="deko schweb" style="left:62%;top:18%">👻</div><div class="deko schweb" style="left:12%;top:88%;animation-delay:1.5s">👻</div>
-  <div class="deko" style="left:50%;top:19%">🎃</div><div class="deko" style="left:32%;top:36%">🎃</div><div class="deko" style="left:68%;top:52%">🎃</div>
-  <div class="deko" style="left:36%;top:84%">🎃</div><div class="deko" style="left:66%;top:89%">🎃</div><div class="deko" style="left:6%;top:33%">🌳</div>
-  <div class="deko" style="left:94%;top:66%">🌳</div><div class="deko" style="left:6%;top:66%">🍂</div><div class="deko" style="left:94%;top:93%">🌳</div>
-  <div class="deko" style="left:4%;top:2%;font-size:2.4rem">🕸️</div><div class="deko" style="left:96%;top:98%;font-size:2.4rem">🕸️</div>
-  <div class="deko" style="left:57%;top:41%;font-size:1.2rem">⛲</div>
+  <div class="deko" style="left:50%;top:3%;font-size:3rem">⭐</div>
+  <div class="deko wackel" style="left:62%;top:18%">🦌</div><div class="deko" style="left:12%;top:88%">🛷</div>
+  <div class="deko" style="left:32%;top:36%">⛄</div><div class="deko" style="left:66%;top:89%">⛄</div>
+  <div class="deko wackel" style="left:68%;top:52%">🔔</div><div class="deko" style="left:36%;top:84%">🎁</div>
+  <div class="deko" style="left:50%;top:19%">🕯️</div>
+  <div class="deko" style="left:6%;top:33%">🎄</div><div class="deko" style="left:94%;top:66%">🎄</div>
+  <div class="deko" style="left:6%;top:66%">🌲</div><div class="deko" style="left:94%;top:93%">🎄</div>
+  <div class="deko" style="left:34%;top:52%;font-size:1.3rem">🛖</div><div class="deko" style="left:65%;top:38%;font-size:1.3rem">🛖</div>
   <div class="ortsname" style="left:16%;top:53%">Saalbach</div>
-  <div id="boot"><span>🎃</span></div>
+  <div class="ortsname" style="left:50%;top:33%">Weihnachtsmarkt</div>
+  <div id="figur"><span>🎅</span></div>
 </div>
-<div id="kacke"><div>🍋</div><div class="sauer">Saures!</div></div>
-<div id="suess" aria-hidden="true"></div>
-<div class="unten"><button class="knopf" onclick="neuesSpiel()">🔄 Neues Spiel</button><div class="version">Version <span id="version">1.1.0</span></div></div>
 
-<div id="overlay"><div id="karte"></div></div>
+<div class="unten"><button class="knopf" onclick="neuesSpiel()">🔄 Neues Spiel</button><div class="version">Version <span id="version">1.1.1</span></div></div>
+
+<div id="overlay"><div id="karte" role="dialog" aria-modal="true"></div></div>
+<div id="kohle" aria-hidden="true"><div>🪨</div><div class="kohletext">Nur Kohle!</div></div>
+<div id="regen" aria-hidden="true"></div>
 
 <script>
+/* =====================================================================
+   1. Hilfsfunktionen, 2. Darstellungen, 3. Aufgaben (aus den Übungsscans)
+   ===================================================================== */
 const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
 const pick=a=>a[rnd(0,a.length-1)];
 // Tausendertrennung mit Punkt (1.365, 22.251)
@@ -269,7 +337,7 @@ function laengeMM(){const t=pick(["mm","cm","m"]);let v,w;if(t==="mm"){v=rnd(10,
 function vierLaengen(){const l=[],mm=new Set();while(l.length<4){const x=laengeMM();if(mm.has(x.w)||l.filter(y=>y.t===x.t).length>=2)continue;mm.add(x.w);l.push(x);}return l;}
 const inMM=l=>l.map(x=>x.t==="mm"?x.s:`${x.s} = ${fmt(x.w)} mm`).join("<br>");
 
-const islands=[
+const HAEUSER=[
  {name:"Dietrich-Bonhoeffer-Schule",thema:"Zahlen",icon:"🔢",gens:[
   ()=>{let h,z,e;do{h=rnd(1,8);z=rnd(0,25);e=rnd(0,19);}while((z<10&&e<10)||100*h+10*z+e>999);
        const z2=z+Math.floor(e/10),h2=h+Math.floor(z2/10);
@@ -414,129 +482,141 @@ const islands=[
  ]}
 ];
 
-const PER_ISLAND=5;
+
+/* =====================================================================
+   4. Einstellungen
+   ===================================================================== */
+const AUFGABEN_PRO_HAUS=5;
+const PUNKTE=[10,5,2];                 // Plätzchen für den 1., 2. und 3. Versuch
+const MINI_MAX=10;                     // höchstens so viele Bonus-Plätzchen pro Minispiel
 const POS=[[20,9],[78,10],[19,27],[81,29],[17,44],[83,46],[22,76],[78,78],[50,91]];
-const SCHATZ=[50,44];
-let coins=0,fertig=[],cur=0,taskIdx=0,tries=0,tasks=[],islandCoins=0,best=0;
-try{best=parseInt(localStorage.getItem("schatzinselRekord")||"0",10)||0;}catch(e){}
-
-const meer=document.getElementById("meer"),boot=document.getElementById("boot");
-const overlay=document.getElementById("overlay"),karte=document.getElementById("karte");
-
-function updateStats(){
-  document.getElementById("coins").textContent=coins;
-  document.getElementById("inseln").textContent=anzahlFertig();
-  document.getElementById("best").textContent=best;
-}
-
-const anzahlFertig=()=>islands.filter((_,i)=>fertig[i]).length;
-const alleFertig=()=>anzahlFertig()===islands.length;
-
-function drawMap(){
-  meer.querySelectorAll(".insel,.schatz").forEach(b=>b.remove());
-  islands.forEach((isl,i)=>{
-    const b=document.createElement("button");
-    b.className="insel"+(fertig[i]?" fertig":"");
-    b.style.left=POS[i][0]+"%";b.style.top=POS[i][1]+"%";
-    b.innerHTML=`<span class="land">${isl.icon}${fertig[i]?'<span class="haken">✅</span>':""}</span><span class="name">${isl.name}<small>${isl.thema}</small></span>`;
-    b.onclick=()=>segleZu(i);
-    meer.appendChild(b);
-  });
-  const s=document.createElement("button"),auf=alleFertig();
-  s.className="schatz"+(auf?" offen":"");
-  s.style.left=SCHATZ[0]+"%";s.style.top=SCHATZ[1]+"%";
-  s.innerHTML=`<span class="truhe">${auf?"🍬":"🎃"}${auf?"":'<span class="schloss">🔒</span>'}</span><span class="name">${auf?"Kessel öffnen!":`Marktplatz · Kessel ${anzahlFertig()}/${islands.length} ✅`}</span>`;
-  s.onclick=schatzKlick;
-  meer.appendChild(s);
-  updateStats();
-}
-
-/* ---------- Hexe läuft zum angetippten Haus ---------- */
+const BAUM=[50,44];                    // Weihnachtsbaum auf dem Marktplatz
 const START=[50,63];
-let bx=START[0],by=START[1],segelt=false;
-function platziereBoot(){boot.style.left=bx+"%";boot.style.top=by+"%";}
+const SPEICHER={stand:"weihnachtStand",rekord:"weihnachtRekord"};
+const LECKER=["🍪","⭐","🎁","🍬","🧁","❄️"];
 
-function segleZu(i,ziel){
-  if(segelt)return;
-  if(i>=0&&fertig[i]){openIsland(i);return;}
-  const P=i<0?SCHATZ:POS[i];
-  const zx=i<0?P[0]:P[0]+(P[0]<50?17:-17),zy=i<0?P[1]+8:P[1]+3;
-  if(zx<bx)boot.classList.add("links");else boot.classList.remove("links");
-  const weit=Math.abs(zx-bx)>0.5||Math.abs(zy-by)>0.5;
-  bx=zx;by=zy;platziereBoot();
-  segelt=true;
-  setTimeout(()=>{segelt=false;ziel?ziel():openIsland(i);},weit?1050:0);
+/* =====================================================================
+   5. Spielzustand
+   ===================================================================== */
+const spiel={plaetzchen:0,bonus:0,fertig:[],rekord:0};               // bleibt über Neuladen erhalten
+const runde={haus:-1,aufgaben:[],nr:0,versuche:0,plaetzchen:0};      // das gerade besuchte Haus
+const figur={x:START[0],y:START[1],unterwegs:false};
+let miniStop=null;
+
+const $=id=>document.getElementById(id);
+const dorf=$("dorf"),figurEl=$("figur"),overlay=$("overlay"),karte=$("karte");
+
+/* =====================================================================
+   6. Speichern (nur in diesem Browser)
+   ===================================================================== */
+const speicher={
+  lesen(k){try{return localStorage.getItem(k);}catch(e){return null;}},
+  schreiben(k,v){try{localStorage.setItem(k,v);}catch(e){}},
+  loeschen(k){try{localStorage.removeItem(k);}catch(e){}}
+};
+function standSpeichern(){
+  speicher.schreiben(SPEICHER.stand,JSON.stringify({fertig:HAEUSER.map((_,i)=>!!spiel.fertig[i]),plaetzchen:spiel.plaetzchen,bonus:spiel.bonus}));
+}
+function standLaden(){
+  try{const d=JSON.parse(speicher.lesen(SPEICHER.stand)||"null");
+    if(d&&Array.isArray(d.fertig)&&d.fertig.length===HAEUSER.length&&Number.isFinite(d.plaetzchen)){
+      spiel.fertig=d.fertig;spiel.plaetzchen=d.plaetzchen;spiel.bonus=Number.isFinite(d.bonus)?d.bonus:0;return true;}}catch(e){}
+  return false;
+}
+spiel.rekord=parseInt(speicher.lesen(SPEICHER.rekord)||"0",10)||0;
+
+/* =====================================================================
+   7. Dorfkarte, Figur und Dialogfenster
+   ===================================================================== */
+const anzahlFertig=()=>HAEUSER.filter((_,i)=>spiel.fertig[i]).length;
+const alleFertig=()=>anzahlFertig()===HAEUSER.length;
+
+function statsZeigen(){$("plaetzchen").textContent=spiel.plaetzchen;$("haeuser").textContent=anzahlFertig();$("rekord").textContent=spiel.rekord;}
+
+function karteZeichnen(){
+  dorf.querySelectorAll(".haus,.baum").forEach(e=>e.remove());
+  HAEUSER.forEach((h,i)=>{
+    const b=document.createElement("button"),ok=!!spiel.fertig[i];
+    b.className="haus"+(ok?" fertig":"");b.style.left=POS[i][0]+"%";b.style.top=POS[i][1]+"%";
+    b.setAttribute("aria-label",`${h.name}, ${h.thema}${ok?", geschafft":""}`);
+    b.innerHTML=`<span class="gebaeude">${h.icon}${ok?'<span class="haken">✅</span>':""}</span><span class="schild">${h.name}<small>${h.thema}</small></span>`;
+    b.onclick=()=>hausAntippen(i);dorf.appendChild(b);
+  });
+  const auf=alleFertig(),b=document.createElement("button");
+  b.className="baum"+(auf?" offen":"");b.style.left=BAUM[0]+"%";b.style.top=BAUM[1]+"%";
+  b.innerHTML=`<span class="tanne">🎄${auf?"":'<span class="schloss">🔒</span>'}</span><span class="schild">${auf?"Geschenke auspacken!":`Weihnachtsbaum ${anzahlFertig()}/${HAEUSER.length} ✅`}</span>`;
+  b.onclick=baumAntippen;dorf.appendChild(b);
+  statsZeigen();
 }
 
-function suesses(n){
-  const box=document.getElementById("suess"),S=["🍬","🍭","🍫","🍩","🧁","🍪"];
-  for(let i=0;i<n;i++){const e=document.createElement("span");e.textContent=pick(S);
+function schneeErzeugen(){
+  for(let i=0;i<28;i++){const f=document.createElement("span");f.className="flocke";f.textContent=i%3?"•":"❄";
+    f.style.left=rnd(0,98)+"%";f.style.fontSize=(i%3?rnd(8,14):rnd(12,20))+"px";
+    f.style.animationDuration=rnd(8,16)+"s";f.style.animationDelay=-rnd(0,16)+"s";dorf.appendChild(f);}
+}
+
+function figurSetzen(){figurEl.style.left=figur.x+"%";figurEl.style.top=figur.y+"%";}
+function laufeZu([zx,zy],dann){
+  if(figur.unterwegs)return;
+  figurEl.classList.toggle("links",zx<figur.x);
+  const weit=Math.abs(zx-figur.x)>.5||Math.abs(zy-figur.y)>.5;
+  figur.x=zx;figur.y=zy;figurSetzen();figur.unterwegs=true;
+  setTimeout(()=>{figur.unterwegs=false;dann();},weit?1050:0);
+}
+
+function karteZeigen(html){karte.innerHTML=html;overlay.style.display="flex";karte.scrollTop=0;}
+function karteSchliessen(){overlay.style.display="none";}
+
+/* =====================================================================
+   8. Belohnung und Kohle
+   ===================================================================== */
+function plaetzchenRegen(n){
+  const box=$("regen");
+  for(let i=0;i<n;i++){const e=document.createElement("span");e.textContent=pick(LECKER);
     e.style.left=rnd(2,94)+"%";e.style.animationDelay=(Math.random()*.4)+"s";box.appendChild(e);setTimeout(()=>e.remove(),2200);}
 }
-function kacke(){
-  const k=document.getElementById("kacke");
-  k.classList.remove("zeigen");void k.offsetWidth;k.classList.add("zeigen");
+function kohle(){const k=$("kohle");k.classList.remove("zeigen");void k.offsetWidth;k.classList.add("zeigen");}
+
+/* =====================================================================
+   9. Häuser besuchen und Aufgaben lösen
+   ===================================================================== */
+function hausAntippen(i){
+  if(figur.unterwegs)return;
+  if(spiel.fertig[i]){karteZeigen(`<div class="gross">✅</div><p class="frage">Hier warst du schon: <b>${HAEUSER[i].name}</b> hat einen Haken!</p><p>Such dir ein Haus ohne Haken aus.</p><button class="knopf" onclick="karteSchliessen()">OK</button>`);return;}
+  const [x,y]=POS[i];laufeZu([x+(x<50?17:-17),y+3],()=>hausBetreten(i));
 }
 
-function openIsland(i){
-  if(fertig[i]){showCard(`<div class="gross">✅</div><p class="frage">Hier warst du schon: <b>${islands[i].name}</b> hat einen Haken!</p><p>Such dir ein Haus ohne Haken aus.</p><button class="knopf" onclick="closeCard()">OK</button>`);return;}
-  cur=i;taskIdx=0;islandCoins=0;
-  const g=shuffle([...islands[i].gens]);
-  tasks=[];for(let k=0;k<PER_ISLAND;k++){const t=g[k%g.length]();
-    for(const f of ["q","e","lw","bild","d"])t[f]=trenne(t[f]);if(t.o)t.o=t.o.map(trenne);tasks.push(t);}
-  showTask();
+function hausBetreten(i){
+  Object.assign(runde,{haus:i,nr:0,versuche:0,plaetzchen:0});
+  const g=shuffle([...HAEUSER[i].gens]);runde.aufgaben=[];
+  for(let k=0;k<AUFGABEN_PRO_HAUS;k++){const t=g[k%g.length]();
+    for(const f of ["q","e","lw","bild","d"])t[f]=trenne(t[f]);if(t.o)t.o=t.o.map(trenne);runde.aufgaben.push(t);}
+  aufgabeZeigen();
 }
 
-function showCard(html){karte.innerHTML=html;overlay.style.display="flex";}
-function closeCard(){overlay.style.display="none";}
-
-function showTask(){
-  tries=0;
-  const t=tasks[taskIdx],isl=islands[cur];
-  let dots="";for(let k=0;k<PER_ISLAND;k++)dots+=k<taskIdx?"🟡":k===taskIdx?"⭕":"⚪";
-  showCard(`<button class="abbruch" onclick="abbruchFrage(true)">✕ Abbrechen</button>
-    <div id="abbruch" class="abbruchbox" hidden><p><b>Wirklich abbrechen?</b></p>
-      <p id="abbruchtext"></p>
-      <button class="knopf" onclick="abbrechen()">Ja, zurück zur Karte</button><button class="knopf gruen" onclick="abbruchFrage(false)">Weiterspielen</button></div>
-    <div class="kopf">${isl.icon} ${isl.name} – Aufgabe ${taskIdx+1} von ${PER_ISLAND}</div>
-    <div class="punkte">${dots}</div>
+function aufgabeZeigen(){
+  runde.versuche=0;
+  const t=runde.aufgaben[runde.nr],h=HAEUSER[runde.haus];
+  let fortschritt="";for(let k=0;k<AUFGABEN_PRO_HAUS;k++)fortschritt+=k<runde.nr?"🍪":k===runde.nr?"⭕":"⚪";
+  karteZeigen(`<button class="abbruch" onclick="abbruchFrage(true)">✕ Abbrechen</button>
+    <div id="abbruch" class="abbruchbox" hidden><p><b>Wirklich abbrechen?</b></p><p id="abbruchtext"></p>
+      <button class="knopf" onclick="abbrechen()">Ja, zurück ins Dorf</button><button class="knopf gruen" onclick="abbruchFrage(false)">Weiterspielen</button></div>
+    <div class="kopf">${h.icon} ${h.name} – Aufgabe ${runde.nr+1} von ${AUFGABEN_PRO_HAUS}</div>
+    <div class="punkte">${fortschritt}</div>
     <p class="frage">${t.q}</p>${t.bild||""}
-    ${t.o?`<div class="wahl" id="wahl"></div>`:`<div><input id="antwort" inputmode="decimal" autocomplete="off" placeholder="?"></div>`}
-    <div id="knoepfe">${t.o?"":`<button class="knopf" onclick="check()">Prüfen ✔️</button>`}</div>
-    <p id="feedback"></p>`);
+    ${t.o?`<div class="wahl" id="wahl"></div>`:`<div><input id="antwort" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="Deine Antwort"></div>`}
+    <div id="knoepfe">${t.o?"":`<button class="knopf" onclick="pruefeZahl()">Prüfen ✔️</button>`}</div>
+    <p id="feedback" aria-live="polite"></p>`);
   if(t.o){
-    const w=document.getElementById("wahl");
-    (t.fest?t.o.map((txt,i)=>({txt,i})):shuffle(t.o.map((txt,i)=>({txt,i})))).forEach(({txt,i})=>{
-      const b=document.createElement("button");b.textContent=txt;b.dataset.i=i;
-      b.onclick=()=>checkWahl(b,i);w.appendChild(b);
-    });
+    const w=$("wahl"),reihenfolge=t.o.map((txt,i)=>({txt,i}));
+    (t.fest?reihenfolge:shuffle(reihenfolge)).forEach(({txt,i})=>{
+      const b=document.createElement("button");b.textContent=txt;b.dataset.i=i;b.onclick=()=>pruefeWahl(b,i);w.appendChild(b);});
     return;
   }
-  const inp=document.getElementById("antwort");
-  inp.addEventListener("keydown",e=>{if(e.key==="Enter")check();});
-  setTimeout(()=>inp.focus(),50);
+  const inp=$("antwort");inp.addEventListener("keydown",e=>{if(e.key==="Enter")pruefeZahl();});setTimeout(()=>inp.focus(),50);
 }
 
-const PUNKTE=[10,5,2];  // Süßigkeiten für den 1., 2. und 3. Versuch
-const tippText=t=>t.e?`<span class="tipp">💡 Tipp: ${t.e}</span>`:"";
-function richtig(t){const plus=PUNKTE[tries]||2;coins+=plus;islandCoins+=plus;updateStats();
-  suesses(plus===10?10:plus===5?5:3);return `<span class="ok">🍬 Süßes! +${plus} Süßigkeiten</span>`;}
-
-function check(){
-  const inp=document.getElementById("antwort"),fb=document.getElementById("feedback");
-  if(!inp||inp.disabled)return;
-  const v=parseNum(inp.value);
-  if(v===null){fb.innerHTML=`<span class="nein">Bitte gib eine Zahl ein.</span>`;return;}
-  const t=tasks[taskIdx];
-  if(Math.abs(v-t.a)<0.005){fb.innerHTML=richtig(t);inp.disabled=true;weiterKnopf(false);return;}
-  tries++;kacke();
-  if(tries===1){fb.innerHTML=`<span class="nein">🍋 Saures! Versuch es nochmal!</span>`;inp.value="";inp.focus();}
-  else if(tries===2){fb.innerHTML=`<span class="nein">🍋 Saures! Noch ein Versuch – hier ist ein Tipp:</span>${tippText(t)}`;inp.value="";inp.focus();}
-  else{fb.innerHTML=`<span class="nein">🍋 Saures! Die richtige Antwort ist ${t.d||fmt(t.a)}.</span>${t.e&&!t.lw?`<span class="tipp">💡 ${t.e}</span>`:""}`;
-    inp.disabled=true;weiterKnopf(true);}
-}
-
-// Zahlen wie "1.234", "3,75", "45 €" oder "202 km" verstehen
+/* Zahlen wie "1.234", "3,75", "45 €" oder "202 km" verstehen */
 function parseNum(s){
   s=s.trim().replace(/[^\d.,]/g,"");
   if(!/\d/.test(s))return null;
@@ -545,87 +625,215 @@ function parseNum(s){
   return /^\d+(\.\d+)?$/.test(s)?parseFloat(s):null;
 }
 
-function checkWahl(btn,i){
-  const t=tasks[taskIdx],fb=document.getElementById("feedback");
-  const alle=[...document.querySelectorAll("#wahl button")];
-  const ende=z=>{alle.forEach(b=>{b.disabled=true;if(+b.dataset.i===t.a)b.classList.add("richtig");});weiterKnopf(z);};
-  if(i===t.a){fb.innerHTML=richtig(t);ende(false);return;}
-  // so viele Versuche, wie es sinnvoll ist: höchstens 3, aber nie so viele, dass nur noch die richtige Antwort übrig bleibt
-  const maxV=Math.min(3,t.o.length-1);
-  tries++;kacke();btn.classList.add("falsch");btn.disabled=true;
-  if(tries>=maxV){fb.innerHTML=`<span class="nein">🍋 Saures! Leider falsch.</span>`;ende(true);}
-  else if(tries===1){fb.innerHTML=`<span class="nein">🍋 Saures! Versuch es nochmal!</span>`;}
-  else{fb.innerHTML=`<span class="nein">🍋 Saures! Noch ein Versuch – hier ist ein Tipp:</span>${tippText(t)}`;}
+const tippText=t=>t.e?`<span class="tipp">💡 Tipp: ${t.e}</span>`:"";
+const kohleText=["🪨 Nur Kohle! Versuch es nochmal!","🪨 Nur Kohle! Noch ein Versuch – hier ist ein Tipp:"];
+
+function richtig(){
+  const plus=PUNKTE[runde.versuche]||2;spiel.plaetzchen+=plus;runde.plaetzchen+=plus;statsZeigen();
+  plaetzchenRegen(plus===10?10:plus===5?5:3);return `<span class="ok">🍪 Super! +${plus} Plätzchen</span>`;
 }
 
-function weiterKnopf(zeigen){
-  const t=tasks[taskIdx];
-  document.getElementById("knoepfe").innerHTML=(t.lw?`<button class="knopf blau" id="lwk" onclick="lwToggle()">📝 Lösungsweg</button>`:"")+`<button class="knopf gruen" id="weiter" onclick="next()">Weiter ➡️</button>`;
-  if(t.lw){const d=document.createElement("div");d.id="lw";d.className="lw";d.innerHTML=`<div class="lwtitel">So rechnest du:</div>${t.lw}`;d.hidden=!zeigen;document.getElementById("feedback").after(d);}
-  document.getElementById("weiter").focus();
+/* 1. Fehler: nur Kohle · 2. Fehler: Tipp · 3. Fehler: Lösung mit Lösungsweg */
+function pruefeZahl(){
+  const inp=$("antwort"),fb=$("feedback");
+  if(!inp||inp.disabled)return;
+  const v=parseNum(inp.value);
+  if(v===null){fb.innerHTML=`<span class="nein">Bitte gib eine Zahl ein.</span>`;return;}
+  const t=runde.aufgaben[runde.nr];
+  if(Math.abs(v-t.a)<0.005){fb.innerHTML=richtig();inp.disabled=true;weiterKnopf(false);return;}
+  runde.versuche++;kohle();
+  if(runde.versuche<3){fb.innerHTML=`<span class="nein">${kohleText[runde.versuche-1]}</span>${runde.versuche===2?tippText(t):""}`;inp.value="";inp.focus();return;}
+  fb.innerHTML=`<span class="nein">🪨 Nur Kohle! Die richtige Antwort ist ${t.d||fmt(t.a)}.</span>${t.e&&!t.lw?`<span class="tipp">💡 ${t.e}</span>`:""}`;
+  inp.disabled=true;weiterKnopf(true);
 }
-function abbruchFrage(an){const d=document.getElementById("abbruch");if(!d)return;
-  document.getElementById("abbruchtext").textContent=(islandCoins?`Die ${islandCoins} Süßigkeiten aus diesem Haus gehen dann verloren.`:"Du kannst das Haus später neu beginnen.")+" Das Haus bekommt noch keinen Haken.";
-  d.hidden=!an;if(an)karte.scrollTop=0;}
-function abbrechen(){coins-=islandCoins;islandCoins=0;closeCard();drawMap();}
-function lwToggle(){const d=document.getElementById("lw");if(d)d.hidden=!d.hidden;}
 
-function next(){taskIdx++;if(taskIdx<PER_ISLAND)showTask();else finish();}
+/* Auswahlfragen: höchstens 3 Versuche, aber nie so viele, dass nur noch die richtige Antwort übrig bleibt */
+function pruefeWahl(btn,i){
+  const t=runde.aufgaben[runde.nr],fb=$("feedback"),alle=[...document.querySelectorAll("#wahl button")];
+  const ende=zeigen=>{alle.forEach(b=>{b.disabled=true;if(+b.dataset.i===t.a)b.classList.add("richtig");});weiterKnopf(zeigen);};
+  if(i===t.a){fb.innerHTML=richtig();ende(false);return;}
+  runde.versuche++;kohle();btn.classList.add("falsch");btn.disabled=true;
+  if(runde.versuche>=Math.min(3,t.o.length-1)){fb.innerHTML=`<span class="nein">🪨 Nur Kohle! Leider falsch.</span>`;ende(true);return;}
+  fb.innerHTML=`<span class="nein">${kohleText[runde.versuche-1]}</span>${runde.versuche===2?tippText(t):""}`;
+}
 
-function schatzKlick(){
-  if(segelt)return;
+function weiterKnopf(lwOffen){
+  const t=runde.aufgaben[runde.nr];
+  $("knoepfe").innerHTML=(t.lw?`<button class="knopf blau" onclick="lwUmschalten()">📝 Lösungsweg</button>`:"")+`<button class="knopf gruen" id="weiter" onclick="naechsteAufgabe()">Weiter ➡️</button>`;
+  if(t.lw){const d=document.createElement("div");d.id="lw";d.className="lw";d.innerHTML=`<div class="lwtitel">So rechnest du:</div>${t.lw}`;d.hidden=!lwOffen;$("feedback").after(d);}
+  $("weiter").focus();
+}
+function lwUmschalten(){const d=$("lw");if(d)d.hidden=!d.hidden;}
+
+function abbruchFrage(an){
+  const d=$("abbruch");if(!d)return;
+  $("abbruchtext").textContent=(runde.plaetzchen?`Die ${runde.plaetzchen} Plätzchen aus diesem Haus gehen dann verloren.`:"Du kannst das Haus später neu beginnen.")+" Das Haus bekommt noch keinen Haken.";
+  d.hidden=!an;if(an)karte.scrollTop=0;
+}
+function abbrechen(){spiel.plaetzchen-=runde.plaetzchen;runde.plaetzchen=0;karteSchliessen();karteZeichnen();}
+
+function naechsteAufgabe(){runde.nr++;if(runde.nr<AUFGABEN_PRO_HAUS)aufgabeZeigen();else hausGeschafft();}
+
+const restText=()=>{const rest=HAEUSER.length-anzahlFertig();
+  return rest?`Noch <b>${rest}</b> ${rest>1?"Häuser":"Haus"} ohne Haken, dann darfst du am Weihnachtsbaum die Geschenke auspacken!`:"🎉 Jedes Haus hat einen Haken! Lauf jetzt zum Weihnachtsbaum auf dem Marktplatz!";};
+
+function hausGeschafft(){
+  const i=runde.haus,m=minispielFuer(i);
+  spiel.fertig[i]=true;standSpeichern();karteZeichnen();
+  karteZeigen(`<div class="gross">✅</div><p class="frage"><b>${HAEUSER[i].name} geschafft!</b></p>
+    <p>In diesem Haus: <b>${runde.plaetzchen}</b> von ${AUFGABEN_PRO_HAUS*10} Plätzchen 🍪</p>
+    <p class="frage">🎮 <b>Bonus-Minispiel: ${m.titel}</b><br><small>${m.kurz} Bis zu ${MINI_MAX} Extra-Plätzchen!</small></p>
+    <button class="knopf gruen" onclick="minispielStarten(${i})">Los geht's!</button><button class="knopf grau" onclick="zurueckInsDorf()">Überspringen</button>`);
+}
+function zurueckInsDorf(){karteZeigen(`<div class="gross">🏘️</div><p>${restText()}</p><button class="knopf gruen" onclick="karteSchliessen()">Zurück ins Dorf 🗺️</button>`);}
+
+/* =====================================================================
+   10. Minispiele – nach jedem Haus eines (kurz, ohne Rechnen)
+   Jedes Minispiel bekommt ein Spielfeld, eine Infozeile und ende(punkte).
+   start() gibt eine stop()-Funktion zurück, die alle Timer beendet.
+   ===================================================================== */
+const MINISPIELE=[
+  {titel:"Geschenke fangen",kurz:"Fang mit dem Schlitten die Geschenke!",
+   anleitung:"Zieh den Schlitten mit dem Finger hin und her (oder ← →). Fang die Geschenke 🎁, aber keine Kohle 🪨! 20 Sekunden.",
+   start(box,info,ende){
+     box.classList.add("feld");box.innerHTML=`<div class="schlitten">🛷</div>`;
+     const sl=box.querySelector(".schlitten"),teile=[];let x=50,punkte=0,zeit=20,aktiv=true;
+     const setzeX=v=>{x=Math.max(8,Math.min(92,v));sl.style.left=x+"%";};setzeX(50);
+     const zeig=()=>{info.textContent=`🎁 ${punkte}   ⏱️ ${zeit} s`;};zeig();
+     const zeiger=e=>{const r=box.getBoundingClientRect();setzeX((e.clientX-r.left)/r.width*100);};
+     box.addEventListener("pointermove",zeiger);box.addEventListener("pointerdown",zeiger);
+     const taste=e=>{if(e.key==="ArrowLeft"){setzeX(x-8);e.preventDefault();}else if(e.key==="ArrowRight"){setzeX(x+8);e.preventDefault();}};
+     document.addEventListener("keydown",taste);
+     const neu=setInterval(()=>{const k=Math.random()<.2,el=document.createElement("span");el.className="faellt";el.textContent=k?"🪨":"🎁";
+       const t={el,x:rnd(6,94),y:-8,v:rnd(25,40)/10,kohle:k};el.style.left=t.x+"%";el.style.top="-8%";box.appendChild(el);teile.push(t);},650);
+     let vorher=performance.now();
+     const schleife=jetzt=>{if(!aktiv)return;const dt=Math.min(50,jetzt-vorher)/16.7;vorher=jetzt;
+       for(let j=teile.length-1;j>=0;j--){const t=teile[j];t.y+=t.v*dt*.2;t.el.style.top=t.y+"%";
+         if(t.y>78&&t.y<92&&Math.abs(t.x-x)<11){punkte=t.kohle?Math.max(0,punkte-1):punkte+1;zeig();t.el.remove();teile.splice(j,1);}
+         else if(t.y>104){t.el.remove();teile.splice(j,1);}}
+       requestAnimationFrame(schleife);};
+     requestAnimationFrame(schleife);
+     const uhr=setInterval(()=>{zeit--;zeig();if(zeit<=0){stop();ende(punkte);}},1000);
+     function stop(){aktiv=false;clearInterval(neu);clearInterval(uhr);document.removeEventListener("keydown",taste);}
+     return stop;}},
+
+  {titel:"Rentiere auf dem Dach",kurz:"Tippe die Rentiere an!",
+   anleitung:"Auf den Dächern tauchen Rentiere 🦌 auf. Tippe sie schnell an, aber nicht den Schneemann ⛄! 20 Sekunden.",
+   start(box,info,ende){
+     box.classList.add("dach");
+     box.innerHTML=Array.from({length:9},()=>`<button class="loch" aria-label="Dach"><span></span></button>`).join("");
+     const l=[...box.querySelectorAll(".loch")];let punkte=0,zeit=20,aktiv=true,an=-1,typ="",weg;
+     const zeig=()=>{info.textContent=`🦌 ${punkte}   ⏱️ ${zeit} s`;};zeig();
+     const auftauchen=()=>{if(!aktiv)return;if(an>=0)l[an].classList.remove("da");
+       let n;do{n=rnd(0,8);}while(n===an);an=n;typ=Math.random()<.2?"⛄":"🦌";
+       l[an].querySelector("span").textContent=typ;l[an].classList.add("da");clearTimeout(weg);weg=setTimeout(auftauchen,rnd(750,1150));};
+     l.forEach((b,i)=>b.onclick=()=>{if(!aktiv||i!==an||!b.classList.contains("da"))return;b.classList.remove("da");
+       if(typ==="🦌"){punkte++;b.classList.add("treffer");setTimeout(()=>b.classList.remove("treffer"),250);}else punkte=Math.max(0,punkte-1);
+       zeig();clearTimeout(weg);weg=setTimeout(auftauchen,300);});
+     auftauchen();
+     const uhr=setInterval(()=>{zeit--;zeig();if(zeit<=0){stop();ende(punkte);}},1000);
+     function stop(){aktiv=false;clearInterval(uhr);clearTimeout(weg);}
+     return stop;}},
+
+  {titel:"Weihnachts-Memory",kurz:"Finde alle Paare!",
+   anleitung:"Decke immer zwei Karten auf und finde alle 6 Paare. Je weniger Versuche du brauchst, desto mehr Plätzchen gibt es.",
+   start(box,info,ende){
+     box.classList.add("memory");const S=shuffle(["🎄","⭐","🎅","⛄","🔔","🍪"].flatMap(x=>[x,x]));
+     box.innerHTML=S.map(x=>`<button class="mk" aria-label="Karte"><span>${x}</span></button>`).join("");
+     const k=[...box.querySelectorAll(".mk")];let offen=[],paare=0,zuege=0,sperre=false,aktiv=true,t;
+     const zeig=()=>{info.textContent=`Paare: ${paare}/6   Versuche: ${zuege}`;};zeig();
+     k.forEach((b,i)=>b.onclick=()=>{if(!aktiv||sperre||b.classList.contains("auf"))return;b.classList.add("auf");offen.push(i);
+       if(offen.length<2)return;zuege++;const [a,c]=offen;offen=[];
+       if(S[a]===S[c]){k[a].classList.add("paar");k[c].classList.add("paar");paare++;zeig();
+         if(paare===6)t=setTimeout(()=>{stop();ende(Math.max(3,MINI_MAX-Math.max(0,zuege-8)));},600);}
+       else{sperre=true;zeig();t=setTimeout(()=>{k[a].classList.remove("auf");k[c].classList.remove("auf");sperre=false;},800);}});
+     function stop(){aktiv=false;clearTimeout(t);}
+     return stop;}},
+
+  {titel:"Glocken-Melodie",kurz:"Merk dir, welche Glocken läuten!",
+   anleitung:"Die Glocken leuchten nacheinander auf. Tippe sie danach in der gleichen Reihenfolge an. Jede Runde kommt eine Glocke dazu (5 Runden).",
+   start(box,info,ende){
+     box.classList.add("glocken");const F=["#e53935","#43a047","#fdd835","#1e88e5"];
+     box.innerHTML=F.map(f=>`<button class="glocke" style="--f:${f}" aria-label="Glocke">🔔</button>`).join("");
+     const g=[...box.querySelectorAll(".glocke")],timer=[];let folge=[rnd(0,3),rnd(0,3)],pos=0,eingabe=false,aktiv=true,runden=0,ton=null;
+     try{ton=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}
+     const klang=i=>{if(!ton)return;try{const o=ton.createOscillator(),v=ton.createGain();o.frequency.value=[523,659,784,1047][i];
+       v.gain.setValueAtTime(.18,ton.currentTime);v.gain.exponentialRampToValueAtTime(.001,ton.currentTime+.4);o.connect(v).connect(ton.destination);o.start();o.stop(ton.currentTime+.4);}catch(e){}};
+     const leuchte=i=>{g[i].classList.add("leucht");klang(i);timer.push(setTimeout(()=>g[i].classList.remove("leucht"),380));};
+     const vorspielen=()=>{eingabe=false;pos=0;info.textContent=`Runde ${runden+1}: Schau genau hin …`;
+       folge.forEach((x,k)=>timer.push(setTimeout(()=>leuchte(x),600+k*650)));
+       timer.push(setTimeout(()=>{eingabe=true;info.textContent=`Runde ${runden+1}: Jetzt du! (${folge.length} Glocken)`;},600+folge.length*650));};
+     g.forEach((b,i)=>b.onclick=()=>{if(!aktiv||!eingabe)return;leuchte(i);
+       if(i!==folge[pos]){eingabe=false;info.textContent="Oh, falsche Glocke!";timer.push(setTimeout(()=>{stop();ende(runden*2);},900));return;}
+       if(++pos<folge.length)return;
+       runden++;eingabe=false;
+       if(runden>=5){info.textContent="Perfekt! Alle 5 Runden geschafft!";timer.push(setTimeout(()=>{stop();ende(MINI_MAX);},900));return;}
+       folge.push(rnd(0,3));timer.push(setTimeout(vorspielen,800));});
+     vorspielen();
+     function stop(){aktiv=false;timer.forEach(clearTimeout);try{ton&&ton.close();}catch(e){}}
+     return stop;}}
+];
+const minispielFuer=i=>MINISPIELE[i%MINISPIELE.length];
+
+function minispielStarten(i){
+  const m=minispielFuer(i);
+  karteZeigen(`<div class="kopf mitte">🎮 ${m.titel}</div><p class="anleitung">${m.anleitung}</p>
+    <div id="miniinfo" class="miniinfo" aria-live="polite"></div><div id="mini" class="mini"></div>
+    <button class="knopf grau" onclick="minispielAbbrechen()">Überspringen</button>`);
+  let beendet=false;
+  miniStop=m.start($("mini"),$("miniinfo"),punkte=>{if(beendet)return;beendet=true;miniStop=null;minispielEnde(punkte);});
+}
+function minispielAbbrechen(){if(miniStop){miniStop();miniStop=null;}zurueckInsDorf();}
+function minispielEnde(punkte){
+  const bonus=Math.max(0,Math.min(MINI_MAX,punkte));
+  spiel.plaetzchen+=bonus;spiel.bonus+=bonus;standSpeichern();statsZeigen();
+  if(bonus)plaetzchenRegen(Math.max(4,bonus));
+  karteZeigen(`<div class="gross">${bonus>=8?"🏆":bonus?"🎉":"⛄"}</div>
+    <p class="frage"><b>${bonus?`+${bonus} Bonus-Plätzchen!`:"Diesmal keine Bonus-Plätzchen."}</b></p>
+    <p>${restText()}</p><button class="knopf gruen" onclick="karteSchliessen()">Zurück ins Dorf 🗺️</button>`);
+}
+
+/* =====================================================================
+   11. Weihnachtsbaum: Geschenke auspacken
+   ===================================================================== */
+function baumAntippen(){
+  if(figur.unterwegs)return;
   if(!alleFertig()){
-    const fehlt=islands.filter((_,i)=>!fertig[i]).map(x=>`${x.icon} ${x.name}`);
-    showCard(`<div class="gross">🎃🔒</div><p class="frage"><b>Der Kürbis-Kessel ist noch zugedeckelt.</b></p>
-      <p>Erst wenn jedes Haus einen Haken ✅ hat, geht er auf. Dir fehl${fehlt.length>1?"en":"t"} noch:</p>
-      <p class="fehlt">${fehlt.join("<br>")}</p><button class="knopf" onclick="closeCard()">OK</button>`);return;}
-  segleZu(-1,schatzHeben);
+    const fehlt=HAEUSER.filter((_,i)=>!spiel.fertig[i]).map(h=>`${h.icon} ${h.name}`);
+    karteZeigen(`<div class="gross">🎄🔒</div><p class="frage"><b>Die Geschenke sind noch eingepackt.</b></p>
+      <p>Erst wenn jedes Haus einen Haken ✅ hat, darfst du sie auspacken. Dir fehl${fehlt.length>1?"en":"t"} noch:</p>
+      <p class="fehlt">${fehlt.join("<br>")}</p><button class="knopf" onclick="karteSchliessen()">OK</button>`);return;}
+  laufeZu([BAUM[0],BAUM[1]+8],bescherung);
+}
+function bescherung(){
+  let neu="";
+  if(spiel.plaetzchen>spiel.rekord){spiel.rekord=spiel.plaetzchen;speicher.schreiben(SPEICHER.rekord,spiel.rekord);neu=`<p class="ok">🌟 NEUER REKORD! 🌟</p>`;}
+  statsZeigen();plaetzchenRegen(24);
+  karteZeigen(`<div class="gross">🎁</div><p class="frage"><b>Frohe Weihnachten! Du hast alle Geschenke ausgepackt!</b></p>
+    <div class="gross">🍪🎄⭐</div>
+    <p class="frage">Du hast <b>${spiel.plaetzchen}</b> Plätzchen gesammelt${spiel.bonus?`,<br>davon ${spiel.bonus} aus den Minispielen`:""}.</p>
+    ${neu}<p>Dein Rekord: <b>${spiel.rekord}</b> Plätzchen</p>
+    <button class="knopf gruen" onclick="neuesSpiel(true)">🔄 Nochmal spielen</button>`);
 }
 
-function schatzHeben(){
-    let neu="";
-    if(coins>best){best=coins;try{localStorage.setItem("schatzinselRekord",best);}catch(e){}neu=`<p class="ok">🌟 NEUER REKORD! 🌟</p>`;}
-    updateStats();
-    suesses(24);
-    showCard(`<div class="gross">🎃</div><p class="frage"><b>Happy Halloween! Du hast den großen Kürbis-Kessel geöffnet!</b></p>
-      <div class="gross">🍬🍭🍫</div>
-      <p class="frage">Du hast <b>${coins}</b> von ${islands.length*PER_ISLAND*10} Süßigkeiten gesammelt.</p>
-      ${neu}<p>Dein Rekord: <b>${best}</b> Süßigkeiten</p>
-      <button class="knopf gruen" onclick="neuesSpiel(true)">🔄 Nochmal spielen</button>`);
-}
-
-function finish(){
-  fertig[cur]=true;speichern();drawMap();
-  const rest=islands.length-anzahlFertig();
-  showCard(`<div class="gross">✅</div><p class="frage"><b>${islands[cur].name} geschafft!</b></p>
-    <p>In diesem Haus: <b>${islandCoins}</b> von ${PER_ISLAND*10} Süßigkeiten 🍬</p>
-    <p>${rest?`Noch <b>${rest}</b> ${rest>1?"Häuser":"Haus"} ohne Haken, dann öffnet sich der Kürbis-Kessel!`:"🎉 Jedes Haus hat einen Haken! Lauf jetzt zum Kürbis-Kessel am Marktplatz!"}</p>
-    <button class="knopf gruen" onclick="closeCard()">Zur Karte 🗺️</button>`);
-}
-
-/* ---------- Spielstand speichern (nur auf diesem Gerät) ---------- */
-const STAND="halloweenStand";
-function speichern(){try{localStorage.setItem(STAND,JSON.stringify({fertig:islands.map((_,i)=>!!fertig[i]),coins}));}catch(e){}}
-function laden(){try{const d=JSON.parse(localStorage.getItem(STAND)||"null");
-  if(d&&Array.isArray(d.fertig)&&d.fertig.length===islands.length&&Number.isFinite(d.coins)){fertig=d.fertig;coins=d.coins;return true;}}catch(e){}return false;}
-function loeschen(){try{localStorage.removeItem(STAND);}catch(e){}}
-
+/* =====================================================================
+   12. Neues Spiel und Start
+   ===================================================================== */
 function neuesSpiel(sicher){
   if(!sicher&&anzahlFertig()>0){
-    showCard(`<div class="gross">🔄</div><p class="frage"><b>Wirklich neu anfangen?</b></p>
-      <p>Die Haken bei ${anzahlFertig()} ${anzahlFertig()>1?"Häusern":"Haus"} und deine ${coins} Süßigkeiten werden gelöscht. Dein Rekord bleibt.</p>
-      <button class="knopf" onclick="neuesSpiel(true)">Ja, neu anfangen</button><button class="knopf gruen" onclick="closeCard()">Weiterspielen</button>`);return;}
-  coins=0;fertig=[];loeschen();closeCard();
-  bx=START[0];by=START[1];
-  platziereBoot();drawMap();
+    karteZeigen(`<div class="gross">🔄</div><p class="frage"><b>Wirklich neu anfangen?</b></p>
+      <p>Die Haken bei ${anzahlFertig()} ${anzahlFertig()>1?"Häusern":"Haus"} und deine ${spiel.plaetzchen} Plätzchen werden gelöscht. Dein Rekord bleibt.</p>
+      <button class="knopf" onclick="neuesSpiel(true)">Ja, neu anfangen</button><button class="knopf gruen" onclick="karteSchliessen()">Weiterspielen</button>`);return;}
+  Object.assign(spiel,{plaetzchen:0,bonus:0,fertig:[]});speicher.loeschen(SPEICHER.stand);karteSchliessen();
+  figur.x=START[0];figur.y=START[1];figurSetzen();karteZeichnen();
 }
 
-const geladen=laden();
-drawMap();platziereBoot();
+const geladen=standLaden();
+schneeErzeugen();karteZeichnen();figurSetzen();
 if(geladen&&anzahlFertig()>0){
-  showCard(`<div class="gross">🎃</div><p class="frage"><b>Willkommen zurück!</b></p>
-    <p>${anzahlFertig()} von ${islands.length} Häusern haben schon einen Haken ✅<br>und du hast ${coins} Süßigkeiten 🍬 gesammelt.</p>
-    <button class="knopf gruen" onclick="closeCard()">Weiterspielen</button><button class="knopf" onclick="neuesSpiel(true)">Neu anfangen</button>`);
+  karteZeigen(`<div class="gross">🎅</div><p class="frage"><b>Willkommen zurück!</b></p>
+    <p>${anzahlFertig()} von ${HAEUSER.length} Häusern haben schon einen Haken ✅<br>und du hast ${spiel.plaetzchen} Plätzchen 🍪 gesammelt.</p>
+    <button class="knopf gruen" onclick="karteSchliessen()">Weiterspielen</button><button class="knopf" onclick="neuesSpiel(true)">Neu anfangen</button>`);
 }
 </script>
 </body>
