@@ -28,6 +28,10 @@ header{background:linear-gradient(var(--rot),var(--rot-dunkel));color:var(--gold
 h1{margin:0 0 6px;font-size:1.5rem}
 .stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;font-size:1rem;font-weight:bold}
 .hinweis{text-align:center;color:#cfe3f7;margin:12px 16px 0;font-size:1rem;line-height:1.4}
+.fachwahl{display:flex;justify-content:center;gap:0;margin:14px auto 0;width:max-content;max-width:100%;border:3px solid var(--gold);border-radius:16px;overflow:hidden}
+.fachwahl button{font-family:inherit;font-size:1.15rem;font-weight:bold;padding:10px 22px;border:none;cursor:pointer;background:var(--nacht-hell);color:#cfe3f7}
+.fachwahl button[aria-pressed="true"]{background:var(--gold);color:var(--rot-dunkel)}
+.fachwahl button:focus-visible{outline:3px solid #fff;outline-offset:-5px}
 .unten{text-align:center;padding-bottom:20px}
 .unten .knopf{background:var(--gruen);box-shadow:0 4px 0 var(--gruen-dunkel)}
 .version{margin-top:14px;color:#8fa9c4;font-size:.8rem;letter-spacing:.04em}
@@ -103,6 +107,11 @@ h1{margin:0 0 6px;font-size:1.5rem}
 .kopf.mitte{padding-right:0}
 .gross{font-size:4rem;margin:6px 0}
 .frage{font-size:1.35rem;margin:14px 0;line-height:1.4}
+.frage small{font-size:.9rem;color:#5d4037}
+.lesetext{background:#fff;border-left:6px solid var(--gold);border-radius:10px;padding:10px 12px;margin:0 0 12px;text-align:left;font-size:1.1rem;line-height:1.5;color:var(--tinte)}
+.lw .lesetext{font-size:1rem}
+mark{background:#fff176;padding:0 2px;border-radius:3px}
+input.wort{width:85%;max-width:320px}
 .fehlt{line-height:1.7;font-weight:bold}
 .punkte{margin:8px 0 4px;font-size:1.3rem;letter-spacing:4px}
 input{font-size:1.6rem;width:70%;max-width:240px;padding:8px;text-align:center;border:3px solid #c9a24e;border-radius:12px;font-family:inherit;background:#fff;color:var(--tinte)}
@@ -218,7 +227,10 @@ button.grau{background:#78909c;box-shadow:0 4px 0 #455a64;font-size:1rem}
   </div>
 </header>
 
-<p class="hinweis">🎅 Tippe auf ein Haus, dann stapft der Weihnachtsmann hin. Richtige Antworten bringen Plätzchen 🍪, falsche nur Kohle 🪨. Nach jedem Haus wartet ein Minispiel! Hat jedes Haus einen Haken ✅, darfst du am Weihnachtsbaum die Geschenke auspacken.</p>
+<div class="fachwahl" role="group" aria-label="Fach wählen">
+  <button data-fach="mathe" aria-pressed="true" onclick="fachWaehlen('mathe')">🔢 Mathe</button><button data-fach="deutsch" aria-pressed="false" onclick="fachWaehlen('deutsch')">📖 Deutsch</button>
+</div>
+<p class="hinweis">Wähle oben Mathe oder Deutsch. 🎅 Tippe auf ein Haus, dann stapft der Weihnachtsmann hin. Richtige Antworten bringen Plätzchen 🍪, falsche nur Kohle 🪨. Nach jedem Haus wartet ein Minispiel! Hat jedes Haus einen Haken ✅, darfst du am Weihnachtsbaum die Geschenke auspacken.</p>
 
 <div id="dorf">
   <svg class="dorfbild" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -255,7 +267,7 @@ button.grau{background:#78909c;box-shadow:0 4px 0 #455a64;font-size:1rem}
   <div id="figur"><span>🎅</span></div>
 </div>
 
-<div class="unten"><button class="knopf" onclick="neuesSpiel()">🔄 Neues Spiel</button><div class="version">Version <span id="version">1.1.1</span></div></div>
+<div class="unten"><button class="knopf" onclick="neuesSpiel()">🔄 Neues Spiel</button><div class="version">Version <span id="version">1.1.2</span></div></div>
 
 <div id="overlay"><div id="karte" role="dialog" aria-modal="true"></div></div>
 <div id="kohle" aria-hidden="true"><div>🪨</div><div class="kohletext">Nur Kohle!</div></div>
@@ -337,7 +349,7 @@ function laengeMM(){const t=pick(["mm","cm","m"]);let v,w;if(t==="mm"){v=rnd(10,
 function vierLaengen(){const l=[],mm=new Set();while(l.length<4){const x=laengeMM();if(mm.has(x.w)||l.filter(y=>y.t===x.t).length>=2)continue;mm.add(x.w);l.push(x);}return l;}
 const inMM=l=>l.map(x=>x.t==="mm"?x.s:`${x.s} = ${fmt(x.w)} mm`).join("<br>");
 
-const HAEUSER=[
+const HAEUSER_MATHE=[
  {name:"Dietrich-Bonhoeffer-Schule",thema:"Zahlen",icon:"🔢",gens:[
   ()=>{let h,z,e;do{h=rnd(1,8);z=rnd(0,25);e=rnd(0,19);}while((z<10&&e<10)||100*h+10*z+e>999);
        const z2=z+Math.floor(e/10),h2=h+Math.floor(z2/10);
@@ -484,6 +496,158 @@ const HAEUSER=[
 
 
 /* =====================================================================
+   3b. Deutsch-Aufgaben (nur aus den Übungsscans: Lesen und Verstehen,
+       Richtig schreiben, Wortarten, Wortbedeutung, Texte schreiben)
+   ===================================================================== */
+const markiere=(text,stelle)=>stelle?text.replace(stelle,`<mark>${stelle}</mark>`):text;
+/* Lesetext + Frage, erste Antwort ist richtig; die Fundstelle wird im Lösungsweg markiert */
+const lesen=(text,frage,o,stelle,tipp)=>()=>({q:`<div class="lesetext">${text}</div>${frage}`,o:[...o],a:0,
+  e:tipp||"Lies den Text noch einmal genau. Wo steht die Antwort?",
+  lw:`<div class="lesetext">${markiere(text,stelle)}</div>`+zeilen(stelle?"Wo steht das? Die Antwort steht im markierten Teil.":"",`Antwort: <b>${o[0]}</b>`)});
+/* Auswahlfrage, erste Antwort ist richtig */
+const wahl=(frage,o,tipp,erkl)=>()=>({q:frage,o:[...o],a:0,e:tipp,lw:zeilen(`Richtig: <b>${o[0]}</b>`,erkl)});
+/* Richtig oder falsch? */
+const rf=(satz,wahr,erkl)=>()=>({q:`„${satz}“<br><small>Stimmt das?</small>`,o:["Richtig","Falsch"],a:wahr?0:1,fest:true,
+  lw:zeilen(`<b>${wahr?"Richtig":"Falsch"}</b>`,erkl)});
+/* Wort eintippen; antworten[0] wird als Lösung gezeigt; gross=true: Groß-/Kleinschreibung zählt */
+const tippe=(frage,antworten,tipp,erkl,gross=true)=>()=>({q:frage,txt:[...antworten],gross,d:antworten[0],e:tipp,
+  lw:zeilen(`Richtig: <b>${antworten[0]}</b>${antworten.length>1?` <small>(auch richtig: ${antworten.slice(1).join(", ")})</small>`:""}`,erkl)});
+
+const GROSS="Am Satzanfang und bei Nomen schreibt man groß. Test: Kannst du der, die oder das davorsetzen, ist es ein Nomen.";
+const SS="Nach einem kurzen Selbstlaut schreibt man ss (Gasse, nass), nach einem langen Selbstlaut oder ei/au ß (Spaß, weiß).";
+const DASS="„dass“ verbindet Sätze und lässt sich nicht durch „dieses“ oder „welches“ ersetzen. „das“ kann man ersetzen.";
+const AUFBAU="Eine Geschichte hat Einleitung (wer, wo, wann), Hauptteil (Handlung mit Höhepunkt) und Schluss (Ende, Gefühl).";
+
+const HAEUSER_DEUTSCH=[
+ {thema:"Texte verstehen",icon:"📖",gens:[
+  lesen("Lena füttert jeden Morgen die Hühner im Garten. Danach sammelt sie die Eier ein.","Wann füttert Lena die Hühner?",["Am Morgen","Am Abend","In der Nacht","Am Mittag"],"jeden Morgen"),
+  lesen("Der Fluss war nach dem starken Regen sehr breit und schnell. Die Kinder durften nicht mehr am Ufer spielen.","Warum durften die Kinder nicht mehr am Ufer spielen?",["Weil der Fluss gefährlich war","Weil es zu kalt war","Weil es dunkel war","Weil sie Hausaufgaben hatten"],"sehr breit und schnell"),
+  lesen("Tom vergaß seine Sportschuhe zu Hause. Zum Glück hatte seine Lehrerin ein Ersatzpaar dabei.","Was hatte die Lehrerin dabei?",["Ein Ersatzpaar Schuhe","Einen Regenschirm","Ein Buch","Eine Brotdose"],"ein Ersatzpaar dabei"),
+  lesen("Im Herbst fallen die bunten Blätter von den Bäumen. Der Wind wirbelt sie über die Straßen.","Welche Jahreszeit wird hier beschrieben?",["Herbst","Frühling","Sommer","Winter"],"Im Herbst"),
+  lesen("Paul hat Angst vor Spinnen. Als er eine im Bad sah, rief er laut nach seiner Schwester.","Wovor hat Paul Angst?",["Vor Spinnen","Vor Gewitter","Vor Hunden","Vor dem Dunkeln"],"Angst vor Spinnen"),
+  lesen("Die Eule jagt vor allem in der Nacht und schläft tagsüber in einem hohlen Baumstamm.","Wann schläft die Eule?",["Tagsüber","In der Nacht","Nie","Am Morgen"],"schläft tagsüber","Pass auf: Wann jagt sie, und wann schläft sie?"),
+  lesen("Als der Ball über den Zaun flog, kletterte Ben vorsichtig hinüber, um ihn zu holen.","Was tat Ben, um den Ball zu holen?",["Er kletterte über den Zaun","Er wartete","Er rief seine Mutter","Er gab auf"],"kletterte Ben vorsichtig hinüber"),
+  lesen("Die Lehrerin verteilte am Freitag die korrigierten Diktate. Julia freute sich über ihre gute Note.","Wann verteilte die Lehrerin die Diktate?",["Am Freitag","Am Montag","Am Mittwoch","In den Ferien"],"am Freitag"),
+  lesen("Der Delfin sprang mehrmals elegant aus dem Wasser und tauchte dann wieder tief hinab. Die Zuschauer klatschten begeistert.","Wie oft sprang der Delfin?",["Mehrmals","Einmal","Gar nicht","Nur nachts"],"mehrmals"),
+  lesen("Die Kerze auf dem Kuchen brannte hell, während alle das Geburtstagslied sangen. Anna pustete sie mit einem Wunsch aus.","Was tat Anna mit der Kerze?",["Sie pustete sie aus","Sie zündete sie an","Sie warf sie weg","Sie aß sie"],"Anna pustete sie mit einem Wunsch aus")
+ ]},
+ {thema:"Genau lesen",icon:"🔎",gens:[
+  lesen("Der Igel sucht im Herbst ein warmes Versteck. Er sammelt Blätter und baut sich darunter ein Nest.","Warum sammelt der Igel Blätter?",["Um sich ein warmes Nest zu bauen","Weil er sie fressen will","Weil er damit spielen möchte","Um sie zu verstecken"],"baut sich darunter ein Nest"),
+  lesen("Der Vogel baute sein Nest hoch oben im Baum, damit Katzen es nicht erreichen konnten.","Warum baute der Vogel sein Nest hoch oben?",["Damit Katzen es nicht erreichen konnten","Weil es dort wärmer war","Weil er gern hoch fliegt","Weil unten kein Platz war"],"damit Katzen es nicht erreichen konnten","Achte auf das Wort „damit“."),
+  lesen("Zuerst wäscht sich Ben die Hände, dann setzt er sich an den Tisch und isst.","Was macht Ben zuerst?",["Er wäscht sich die Hände","Er setzt sich an den Tisch","Er isst","Er deckt den Tisch"],"Zuerst wäscht sich Ben die Hände","Achte auf das Wort „zuerst“."),
+  lesen("Der Bauer sät im Frühling die Samen, im Sommer wachsen die Pflanzen, im Herbst erntet er.","Was passiert im Sommer?",["Die Pflanzen wachsen","Der Bauer sät die Samen","Der Bauer erntet","Es schneit"],"im Sommer wachsen die Pflanzen"),
+  lesen("Weil der Akku leer war, konnte Nina ihr Tablet nicht mehr benutzen.","Warum konnte Nina das Tablet nicht mehr benutzen?",["Weil der Akku leer war","Weil das Tablet kaputt war","Weil sie keine Zeit hatte","Weil es verboten war"],"Weil der Akku leer war","Achte auf das Wort „weil“."),
+  lesen("Der Junge band zuerst seine Schuhe zu, bevor er aus dem Haus rannte.","Was tat der Junge, bevor er rannte?",["Er band seine Schuhe zu","Er frühstückte","Er rief seine Mutter","Er zog eine Jacke an"],"band zuerst seine Schuhe zu"),
+  lesen("Im Zoo sahen die Kinder zuerst die Löwen, danach die Affen und zuletzt die Pinguine.","Welches Tier sahen die Kinder zuletzt?",["Die Pinguine","Die Löwen","Die Affen","Die Elefanten"],"zuletzt die Pinguine","Achte auf das Wort „zuletzt“."),
+  lesen("Da der Himmel dunkel wurde, packten die Wanderer schnell ihre Sachen zusammen.","Warum packten die Wanderer schnell zusammen?",["Weil der Himmel dunkel wurde","Weil sie müde waren","Weil sie Hunger hatten","Weil der Bus kam"],"Da der Himmel dunkel wurde","„Da“ bedeutet hier dasselbe wie „weil“."),
+  lesen("Nach dem Regen erschien am Himmel ein bunter Regenbogen.","Was erschien am Himmel?",["Ein bunter Regenbogen","Die Sonne","Ein Flugzeug","Ein Gewitter"],"ein bunter Regenbogen")
+ ]},
+ {thema:"Richtig oder falsch?",icon:"✅",gens:[
+  rf("Ein Igel hält im Winter Winterschlaf.",true,"Igel schlafen im Winter in einem Nest aus Blättern."),
+  rf("Die Sonne geht im Westen auf.",false,"Die Sonne geht im Osten auf und im Westen unter."),
+  rf("Ein Wortfeld sammelt Wörter mit ähnlicher Bedeutung.",true,"Zum Wortfeld „gehen“ gehören z. B. laufen, schlendern, rennen."),
+  rf("Ein Satz beginnt immer mit einem Verb.",false,"Ein Satz kann mit vielen Wörtern beginnen, z. B. „Der Hund bellt.“"),
+  rf("Ein Nomen wird im Deutschen großgeschrieben.",true,GROSS),
+  rf("Eine Überschrift steht immer am Ende eines Textes.",false,"Die Überschrift steht über dem Text, also am Anfang."),
+  rf("Ein Fragesatz endet mit einem Fragezeichen.",true,"Beispiel: „Kommst du mit?“"),
+  rf("Reime klingen am Ende der Zeile gleich oder ähnlich.",true,"Beispiel: Haus – Maus."),
+  rf("Ein Märchen beginnt oft mit „Es war einmal“.",true,"Viele Märchen beginnen so."),
+  rf("Ein Sachtext erzählt immer eine erfundene Geschichte.",false,"Ein Sachtext erklärt Tatsachen, z. B. über Tiere."),
+  rf("Ein Adjektiv beschreibt, wie eine Person oder Sache ist.",true,"Beispiele: groß, schnell, blau."),
+  rf("Der Plural von „das Kind“ ist „die Kinds“.",false,"Der Plural heißt „die Kinder“."),
+  rf("Eine Inhaltsangabe fasst einen Text kurz zusammen.",true,"Sie sagt in wenigen Sätzen, worum es geht."),
+  rf("Ein Absatz erkennt man an einer neuen Zeile mit Einrückung oder Leerzeile.",true,"So sieht man, wo ein neuer Gedanke beginnt."),
+  rf("Die Überschrift eines Textes verrät oft, worum es in dem Text geht.",true,"Darum lohnt es sich, die Überschrift zuerst zu lesen."),
+  rf("Synonyme sind Wörter mit gleicher oder ähnlicher Bedeutung.",true,"Beispiel: froh – fröhlich."),
+  rf("Ein Text ohne Überschrift kann trotzdem verstanden werden.",true,"Die Überschrift hilft, ist aber nicht nötig.")
+ ]},
+ {thema:"Großschreibung",icon:"🔠",gens:[
+  wahl("Welcher Satz ist richtig geschrieben?",["Ich gehe am Montag ins Schwimmbad.","ich gehe am montag ins Schwimmbad.","Ich gehe am montag ins schwimmbad.","ich Gehe am Montag Ins Schwimmbad."],"Satzanfang und Nomen schreibt man groß.",GROSS),
+  wahl("Welches Wort passt richtig in den Satz:<br>„Am Anfang des Satzes steht immer ein …“?",["Großbuchstabe","groß Buchstabe","GROSSBUCHSTABE","großbuchstabe"],"Es ist ein Nomen: der …",GROSS),
+  wahl("Welcher Satz ist richtig geschrieben?",["Der Hund bellt laut.","Der hund Bellt laut.","der Hund bellt laut.","der hund bellt Laut."],"Welches Wort ist ein Nomen?",GROSS),
+  rf("Nach einem Punkt beginnt der nächste Satz mit einem Großbuchstaben.",true,"Jeder Satz beginnt groß."),
+  wahl("Welcher Satz ist richtig geschrieben?",["Das Schwimmen macht Spaß.","Das Schwimmen Macht Spaß.","Das schwimmen macht spaß.","das Schwimmen macht Spaß."],"Steht „das“ vor einem Tunwort, wird es zum Nomen.","„das Schwimmen“ und „der Spaß“ sind Nomen, also groß."),
+  wahl("Welcher Satz beginnt richtig?",["Warum regnet es heute schon wieder?","Warum Regnet es heute schon wieder?","Warum regnet Es heute schon wieder?","warum regnet es heute schon wieder?"],"Nur das erste Wort ist hier groß.","Nur der Satzanfang wird großgeschrieben. Die anderen Wörter sind keine Nomen."),
+  wahl("Welches Wort passt richtig in den Satz:<br>„Die kleine … spielt im Garten.“?",["Katze","katze","KATZE","Katzeh"],"Es ist ein Nomen: die …",GROSS),
+  rf("Das Wort schwimmen wird in „Ich gehe schwimmen“ großgeschrieben.",false,"Hier ist „schwimmen“ ein Verb (Tunwort), also klein."),
+  wahl("Welcher Satz ist richtig geschrieben?",["Meine Schwester liest ein spannendes Buch.","Meine schwester Liest ein Spannendes Buch.","Meine Schwester Liest Ein Spannendes Buch.","meine schwester liest ein spannendes buch."],"Nur Satzanfang und Nomen sind groß.","Groß: Meine (Satzanfang), Schwester und Buch (Nomen)."),
+  wahl("Welches Wort passt richtig in den Satz:<br>„Er hat etwas … erlebt.“?",["Schönes","schönes","schoenes","Schöhnes"],"Nach „etwas“ wird ein Wiewort oft zum Nomen.","„etwas Schönes“ ist ein Nomen, also groß."),
+  tippe("Setze richtig ein:<br>„Er hat große Freude am ___.“ (schwimmen)",["Schwimmen"],"Vor dem Wort steht „am“ (= an dem).","„am Schwimmen“ – mit „dem“ davor ist es ein Nomen, also groß."),
+  rf("Alle Nomen werden im Deutschen großgeschrieben.",true,GROSS),
+  wahl("Welcher Satz ist richtig geschrieben?",["Im Herbst fallen die Blätter von den Bäumen.","im herbst fallen die blätter von den bäumen.","Im Herbst Fallen die Blätter von den Bäumen.","Im herbst fallen die Blätter von den Bäumen."],"Welche Wörter sind Nomen?","Groß: Im (Satzanfang), Herbst, Blätter, Bäumen (Nomen)."),
+  wahl("Welches Wort passt richtig in den Satz:<br>„Beim … lernt man viel.“?",["Lesen","lesen","Lessen"],"„Beim“ heißt „bei dem“.","„beim Lesen“ – mit „dem“ davor ist es ein Nomen, also groß."),
+  wahl("Welches Wort ist ein Nomen und wird großgeschrieben?",["Freundschaft","schön","laufen","heute"],"Mach den Test mit der, die oder das.","„die Freundschaft“ – der Artikel passt, also ist es ein Nomen.")
+ ]},
+ {thema:"s, ss, ß · das/dass",icon:"🔤",gens:[
+  tippe("Wie schreibt man das Wort für kleine harte Früchte wie Wal- oder Haselnüsse?",["Nüsse"],"Mehrzahl von „die Nuss“.",`${SS} Und Nomen schreibt man groß.`),
+  wahl("„Die Katze läuft durch die enge …“",["Gasse","Gaße","Gassse","Gase"],"Sprich das Wort deutlich: Ist das a kurz oder lang?",SS),
+  rf("In „Ich glaube, dass er kommt“ schreibt man dass mit Doppel-s.",true,DASS),
+  wahl("„Er trägt einen … Anzug.“",["weißen","weißhen","weissen","weisen"],"Nach „ei“ kommt kein ss.",SS),
+  wahl("„Das Wasser im See ist …“",["nass","nasss","nas","naß"],"Ist das a kurz oder lang?",SS),
+  tippe("Wie schreibt man das Wort für ein Gefühl großer Freude beim Spielen?",["Spaß"],"Das a ist lang. Und es ist ein Nomen: der …",`${SS} Und Nomen schreibt man groß.`),
+  wahl("Welcher Satz ist richtig?",["Ich glaube, dass er heute kommt.","Ich glaube dass, er heute kommt.","Ich glaube, das er heute kommt.","Ich glaube das, er heute kommt."],"Vor „dass“ steht ein Komma.",DASS),
+  rf("„Das Buch liegt auf dem Tisch“ schreibt man das mit Doppel-s, also dass.",false,"Hier ist „das“ der Artikel von „Buch“: das Buch."),
+  wahl("Welcher Satz ist richtig?",["Das Buch liegt auf dem Tisch.","Das Buch liegt, dass auf dem Tisch.","Dass Buch liegt auf dem tisch.","Dass Buch liegt auf dem Tisch."],"„das Buch“ – Artikel oder Bindewort?","„das“ ist hier der Artikel von „Buch“."),
+  wahl("Welcher Satz ist richtig?",["Er hofft, dass es morgen nicht regnet.","Er hofft, das es morgen nicht regnet.","Er hofft dass es morgen nicht regnet, dass.","Er hofft, dass, es morgen nicht regnet."],"Komma vor „dass“, aber nicht danach.",DASS),
+  tippe("Wie schreibt man das Wort für den Zustand, wenn etwas mit Wasser durchtränkt ist?",["nass"],"Das a ist kurz. Es ist ein Wiewort (Adjektiv).",`${SS} Adjektive schreibt man klein.`),
+  wahl("Welcher Satz ist richtig?",["Das Fahrrad, das dort steht, gehört mir.","Das Fahrrad, das dort steht, gehört mir, dass.","Das Fahrrad, dass dort steht, gehört mir.","Dass Fahrrad, das dort steht, gehört mir."],"Kann man „welches“ einsetzen?","„Das Fahrrad, welches dort steht …“ – also „das“ mit einem s.")
+ ]},
+ {thema:"Wörter schreiben",icon:"✏️",gens:[
+  tippe("Wie schreibt man das Nomen für das Gebäude, in dem man Bücher ausleihen kann?",["Bibliothek","Bücherei"],"Es fängt mit B an.",GROSS),
+  tippe("Wie schreibt man das Nomen für die Jahreszeit nach dem Winter?",["Frühling"],"Nomen schreibt man groß.",GROSS),
+  tippe("Wie schreibt man das Nomen für den Ort, an dem Kinder lernen?",["Schule"],"Nomen schreibt man groß.",GROSS),
+  wahl("Welches Wort ist richtig geschrieben?",["Samstag","Sammstag","samstag","Samstagg"],"Wochentage sind Nomen. Sprich das Wort deutlich.","„der Samstag“ – Nomen, also groß, und mit einem m."),
+  wahl("Warum schreibt man „Hund“ am Ende mit d?",["Verlängern: die Hunde – man hört d","Weil man am Ende t hört","Weil es ein Nomen ist","Weil es ein Tier ist"],"Bilde die Mehrzahl.","Verlängern: Hund – Hunde. Jetzt hörst du das d."),
+  wahl("Warum schreibt man „Bäcker“ mit ä?",["Ableiten: Bäcker kommt von backen","Weil man e hört","Weil es ein Beruf ist","Weil es lang gesprochen wird"],"Welches verwandte Wort kennst du?","Ableiten: Bäcker kommt von backen, deshalb ä."),
+  wahl("Wie hörst du, dass „Sonne“ mit nn geschrieben wird?",["Deutlich sprechen: Son-ne","Verlängern: die Sonnen","Ableiten von Sohn","Das kann man nicht hören"],"Sprich das Wort langsam in Silben.","Deutlich sprechen: Son-ne – du hörst das doppelte n."),
+  tippe("d oder t? Schreib das ganze Wort:<br>„Der Hun_ bellt.“",["Hund"],"Verlängere das Wort: die Hun…e","Verlängern: die Hunde → Hund mit d."),
+  tippe("ä oder e? Schreib das ganze Wort:<br>„Der B_cker backt Brot.“",["Bäcker"],"Mit welchem Tunwort ist das Wort verwandt?","Ableiten: backen → Bäcker mit ä.")
+ ]},
+ {thema:"Wortarten",icon:"🧩",gens:[
+  wahl("Welches Wort passt nicht zu den drei anderen Nomen?",["lesen","Fenster","Tisch","Schrank"],"Drei Wörter sind Dinge, eines ist ein Tunwort.","„lesen“ ist ein Verb. Fenster, Tisch und Schrank sind Nomen."),
+  wahl("Welche Aussage über Verben ist richtig?",["Verben nennt man auch Tunwörter","Verben stehen immer am Satzanfang","Verben werden immer großgeschrieben","Verben können gesteigert werden"],"Verben sagen, was jemand tut.","Verben = Tunwörter, z. B. laufen, malen."),
+  wahl("Welches Wort ist ein Adjektiv, das eine Farbe beschreibt?",["blau","fahren","Wiese","Baum"],"Adjektive beschreiben, wie etwas ist.","„blau“ beschreibt eine Farbe – ein Adjektiv."),
+  wahl("Welche Wortart ist das Wort „malt“?<br>„Der Junge <u>malt</u> ein Bild.“",["Verb","Nomen","Adjektiv"],"Was tut der Junge?","„malt“ sagt, was der Junge tut – ein Verb."),
+  wahl("Welche Wortart ist das Wort „regnerisch“?<br>„Das Wetter ist heute <u>regnerisch</u>.“",["Adjektiv","Nomen","Verb"],"Wie ist das Wetter?","„regnerisch“ beschreibt, wie das Wetter ist – ein Adjektiv."),
+  wahl("Welche Wortart ist „Freundschaft“?",["Nomen","Verb","Adjektiv"],"Passt der, die oder das davor?","„die Freundschaft“ – ein Nomen."),
+  wahl("Welche Wortart ist das Wort „schnell“?<br>„Sie läuft <u>schnell</u> nach Hause.“",["Adjektiv","Verb","Nomen"],"Wie läuft sie?","„schnell“ beschreibt, wie sie läuft – ein Adjektiv."),
+  tippe("Bilde aus dem Verb „singen“ ein passendes Nomen.",["Gesang","Singen","Sänger","Sängerin"],"Nomen schreibt man groß.","z. B. der Gesang oder das Singen."),
+  tippe("Nenne ein Adjektiv, das das Gegenteil von „laut“ ist.",["leise","still"],"Wie ist es in der Bibliothek?","Gegenteil von laut: leise."),
+  rf("Nomen kann man in der Einzahl und in der Mehrzahl verwenden.",true,"Beispiel: das Kind – die Kinder.")
+ ]},
+ {thema:"Wörter verstehen",icon:"💬",gens:[
+  wahl("Welches Wort hat eine ähnliche Bedeutung wie „froh“?<br>„Nach dem Sieg war die ganze Mannschaft <u>froh</u> und ausgelassen.“",["fröhlich","traurig","müde","wütend"],"Wie fühlt man sich nach einem Sieg?","Ein Synonym für „froh“ ist „fröhlich“."),
+  tippe("Nenne ein Synonym für „froh“.",["fröhlich","glücklich","heiter","vergnügt","munter","lustig","freudig","gut gelaunt"],"Ein Wort mit ähnlicher Bedeutung.","z. B. fröhlich, glücklich, heiter.",false),
+  wahl("Was bedeutet „Ufer“?<br>„Die Kinder saßen am <u>Ufer</u> des Sees und beobachteten die Enten.“",["Der Rand am Wasser","Der Boden des Sees","Ein kleines Boot","Eine Insel im See"],"Wo sitzt man, wenn man Enten auf dem See beobachtet?","Das Ufer ist das Land direkt am Wasser."),
+  wahl("Was bedeutet „hastig“?<br>„<u>Hastig</u> lief der Junge zur Bushaltestelle, um den Bus nicht zu verpassen.“",["Sehr eilig","Langsam und gemütlich","Traurig","Leise"],"Er will den Bus nicht verpassen.","„hastig“ heißt: sehr eilig, in großer Eile."),
+  wahl("Welches Wort aus dem Wortfeld „gehen“ passt?<br>„Der alte Mann ___ langsam über die Straße.“",["schlendert","rennt","rast","flitzt"],"Achte auf das Wort „langsam“.","„schlendern“ heißt langsam gehen."),
+  wahl("Was bedeutet „winzig“?<br>„Auf dem Blatt saß eine <u>winzige</u> Ameise.“",["Sehr klein","Sehr groß","Gefährlich","Bunt"],"Wie groß ist eine Ameise?","„winzig“ heißt sehr klein."),
+  wahl("Was sind Synonyme?",["Wörter mit gleicher oder ähnlicher Bedeutung","Wörter mit gegenteiliger Bedeutung","Wörter, die sich reimen","Besonders lange Wörter"],"Denk an froh und fröhlich.","Synonyme: z. B. froh – fröhlich."),
+  wahl("Was sammelt ein Wortfeld?",["Wörter mit ähnlicher Bedeutung","Wörter, die sich reimen","Wörter mit gleichem Anfangsbuchstaben","Nur Nomen"],"Denk an das Wortfeld „gehen“.","Wortfeld „gehen“: laufen, schlendern, rennen …"),
+  wahl("Welche Wörter reimen sich?",["Haus – Maus","Haus – Hose","Haus – Hand","Haus – Hase"],"Reime klingen am Ende gleich.","Haus – Maus: Das Ende klingt gleich.")
+ ]},
+ {thema:"Texte schreiben",icon:"📝",gens:[
+  wahl("Welcher Satz passt am besten als Einleitung zu einer Geschichte über einen Zoobesuch?",["Am Samstag fuhren wir mit der ganzen Familie in den Zoo.","Am Ende war ich sehr müde.","Die Löwen schliefen fast den ganzen Tag.","Zum Schluss kauften wir noch ein Eis."],"Die Einleitung sagt, wer, wo und wann.",AUFBAU),
+  wahl("Welcher Teil einer Geschichte gehört in den Schluss?",["Eine kurze Zusammenfassung oder das Gefühl am Ende","Die Vorstellung der Personen","Der Höhepunkt der Handlung","Die Nennung von Ort und Zeit"],"Wie endet eine Geschichte?",AUFBAU),
+  wahl("Was gehört typischerweise in den Hauptteil einer Erzählung?",["Die ausführliche Handlung mit Höhepunkt","Nur der erste Satz der Geschichte","Nur die Nennung der Personen","Ein einziger Schlusssatz"],"Im Hauptteil passiert das meiste.",AUFBAU),
+  wahl("Welcher Satz eignet sich als Schlusssatz einer Geschichte über einen verlorenen Hund, der wiedergefunden wird?",["Erleichtert nahm ich Bello in den Arm und war so froh, dass alles gut ausgegangen war.","Am Morgen war der Hund plötzlich weg.","Wir suchten stundenlang im Park.","Der Hund heißt Bello und ist drei Jahre alt."],"Der Schluss zeigt das Ende und das Gefühl.",AUFBAU),
+  wahl("In welcher Reihenfolge baut man eine Geschichte normalerweise auf?",["Einleitung – Hauptteil – Schluss","Schluss – Hauptteil – Einleitung","Hauptteil – Einleitung – Schluss","Schluss – Einleitung – Hauptteil"],"Womit fängt eine Geschichte an?",AUFBAU),
+  wahl("Welche Frage beantwortet die Einleitung einer Geschichte meistens nicht?",["Wie endet die Geschichte?","Wo spielt die Geschichte?","Wer ist dabei?","Wann spielt die Geschichte?"],"Die Einleitung steht am Anfang.",AUFBAU),
+  wahl("Welcher Satz mit wörtlicher Rede ist richtig?",["Tim sagt: „Ich bin fertig.“","Tim sagt „Ich bin fertig.“","Tim sagt: Ich bin fertig.","Tim sagt, „ich bin fertig“."],"Doppelpunkt und Anführungszeichen.","Was jemand sagt, steht in Anführungszeichen, davor steht ein Doppelpunkt."),
+  wahl("Welcher Satz begründet eine Meinung?",["Ich mag den Winter, weil man im Schnee rodeln kann.","Ich mag den Winter.","Im Winter ist es kalt.","Der Winter kommt nach dem Herbst."],"Achte auf das Wort „weil“.","Meinung + „weil“ + Grund."),
+  wahl("Welche Fortsetzung ist sinnvoll?<br>„Plötzlich hörte Ben ein lautes Krachen, deshalb …“",["drehte er sich erschrocken um.","war alles ganz still.","schlief er ruhig weiter.","schien die Sonne."],"„deshalb“ heißt: Das ist die Folge.","Auf das Krachen folgt eine Reaktion: Er dreht sich erschrocken um."),
+  wahl("Welche Fortsetzung ist sinnvoll?<br>„Obwohl es draußen regnete, …“",["gingen die Kinder trotzdem spazieren.","war es draußen sehr nass.","weil die Sonne schien.","regnete es draußen."],"„obwohl“ bedeutet: trotzdem passiert etwas.","„obwohl“ … „trotzdem“: Es regnet, aber sie gehen trotzdem raus."),
+  wahl("Welche Fortsetzung ist sinnvoll?<br>„Weil Tim seine Hausaufgaben vergessen hatte, …“",["musste er sie in der Pause nachholen.","freute sich die Lehrerin sehr.","regnete es draußen.","fiel der Schnee."],"Was ist die Folge?","Der Grund (vergessen) führt zu einer Folge (nachholen)."),
+  wahl("Welche Fortsetzung ist sinnvoll?<br>„Zuerst packte Mia ihre Badesachen ein, dann …“",["fuhr sie ins Freibad.","packte sie ihre Badesachen ein.","zog sie ihren Schlafanzug an.","ging sie ins Bett."],"Was macht man nach dem Packen der Badesachen?","Zuerst packen, dann ins Freibad fahren."),
+  wahl("Welche Fortsetzung ist sinnvoll?<br>„Als der Wecker klingelte, …“",["stand Anna müde auf.","ging Anna ins Bett.","war es schon Abend.","schlief der Wecker ein."],"Wann klingelt ein Wecker?","Der Wecker weckt morgens, also steht Anna auf."),
+  wahl("Welche Fortsetzung ist sinnvoll?<br>„Der Hund bellte laut, weil …“",["ein Fremder am Gartentor stand.","er tief und fest schlief.","es ganz still war.","die Katze leise schnurrte."],"Nach „weil“ kommt der Grund.","Ein Fremder am Tor ist ein guter Grund zum Bellen."),
+  wahl("Welche Fortsetzung ist sinnvoll?<br>„Nachdem die Klasse den Ausflug beendet hatte, …“",["fuhr sie mit dem Bus zurück zur Schule.","begann der Ausflug.","packte sie die Rucksäcke für den Ausflug.","frühstückten alle vor dem Ausflug."],"„nachdem“ – was passiert danach?","Erst Ausflug, danach Rückfahrt."),
+  wahl("Welche Fortsetzung ist sinnvoll?<br>„Bevor Anna schlafen ging, …“",["putzte sie sich die Zähne.","stand sie auf.","frühstückte sie.","ging sie zur Schule."],"„bevor“ – was passiert vorher?","Vor dem Schlafengehen putzt man sich die Zähne.")
+ ]}
+];
+
+
+/* =====================================================================
    4. Einstellungen
    ===================================================================== */
 const AUFGABEN_PRO_HAUS=5;
@@ -492,7 +656,15 @@ const MINI_MAX=10;                     // höchstens so viele Bonus-Plätzchen p
 const POS=[[20,9],[78,10],[19,27],[81,29],[17,44],[83,46],[22,76],[78,78],[50,91]];
 const BAUM=[50,44];                    // Weihnachtsbaum auf dem Marktplatz
 const START=[50,63];
-const SPEICHER={stand:"weihnachtStand",rekord:"weihnachtRekord"};
+const SPEICHER={fach:"weihnachtFach"};
+/* Zwei Fächer mit denselben neun Orten, aber eigenen Aufgaben, eigenem Spielstand und Rekord */
+const ORTE=HAEUSER_MATHE.map(h=>h.name);
+HAEUSER_DEUTSCH.forEach((h,i)=>{h.name=ORTE[i];});
+const FAECHER={
+  mathe:  {name:"Mathe",  icon:"🔢",haeuser:HAEUSER_MATHE,  stand:"weihnachtStand",       rekord:"weihnachtRekord"},
+  deutsch:{name:"Deutsch",icon:"📖",haeuser:HAEUSER_DEUTSCH,stand:"weihnachtStandDeutsch",rekord:"weihnachtRekordDeutsch"}
+};
+let fach="mathe",HAEUSER=HAEUSER_MATHE;
 const LECKER=["🍪","⭐","🎁","🍬","🧁","❄️"];
 
 /* =====================================================================
@@ -515,15 +687,14 @@ const speicher={
   loeschen(k){try{localStorage.removeItem(k);}catch(e){}}
 };
 function standSpeichern(){
-  speicher.schreiben(SPEICHER.stand,JSON.stringify({fertig:HAEUSER.map((_,i)=>!!spiel.fertig[i]),plaetzchen:spiel.plaetzchen,bonus:spiel.bonus}));
+  speicher.schreiben(FAECHER[fach].stand,JSON.stringify({fertig:HAEUSER.map((_,i)=>!!spiel.fertig[i]),plaetzchen:spiel.plaetzchen,bonus:spiel.bonus}));
 }
 function standLaden(){
-  try{const d=JSON.parse(speicher.lesen(SPEICHER.stand)||"null");
+  try{const d=JSON.parse(speicher.lesen(FAECHER[fach].stand)||"null");
     if(d&&Array.isArray(d.fertig)&&d.fertig.length===HAEUSER.length&&Number.isFinite(d.plaetzchen)){
       spiel.fertig=d.fertig;spiel.plaetzchen=d.plaetzchen;spiel.bonus=Number.isFinite(d.bonus)?d.bonus:0;return true;}}catch(e){}
   return false;
 }
-spiel.rekord=parseInt(speicher.lesen(SPEICHER.rekord)||"0",10)||0;
 
 /* =====================================================================
    7. Dorfkarte, Figur und Dialogfenster
@@ -603,9 +774,11 @@ function aufgabeZeigen(){
       <button class="knopf" onclick="abbrechen()">Ja, zurück ins Dorf</button><button class="knopf gruen" onclick="abbruchFrage(false)">Weiterspielen</button></div>
     <div class="kopf">${h.icon} ${h.name} – Aufgabe ${runde.nr+1} von ${AUFGABEN_PRO_HAUS}</div>
     <div class="punkte">${fortschritt}</div>
-    <p class="frage">${t.q}</p>${t.bild||""}
-    ${t.o?`<div class="wahl" id="wahl"></div>`:`<div><input id="antwort" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="Deine Antwort"></div>`}
-    <div id="knoepfe">${t.o?"":`<button class="knopf" onclick="pruefeZahl()">Prüfen ✔️</button>`}</div>
+    <div class="frage">${t.q}</div>${t.bild||""}
+    ${t.o?`<div class="wahl" id="wahl"></div>`:t.txt
+      ?`<div><input id="antwort" class="wort" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Wort eintippen" aria-label="Deine Antwort"></div>`
+      :`<div><input id="antwort" inputmode="decimal" autocomplete="off" placeholder="?" aria-label="Deine Antwort"></div>`}
+    <div id="knoepfe">${t.o?"":`<button class="knopf" onclick="pruefeEingabe()">Prüfen ✔️</button>`}</div>
     <p id="feedback" aria-live="polite"></p>`);
   if(t.o){
     const w=$("wahl"),reihenfolge=t.o.map((txt,i)=>({txt,i}));
@@ -613,7 +786,7 @@ function aufgabeZeigen(){
       const b=document.createElement("button");b.textContent=txt;b.dataset.i=i;b.onclick=()=>pruefeWahl(b,i);w.appendChild(b);});
     return;
   }
-  const inp=$("antwort");inp.addEventListener("keydown",e=>{if(e.key==="Enter")pruefeZahl();});setTimeout(()=>inp.focus(),50);
+  const inp=$("antwort");inp.addEventListener("keydown",e=>{if(e.key==="Enter")pruefeEingabe();});setTimeout(()=>inp.focus(),50);
 }
 
 /* Zahlen wie "1.234", "3,75", "45 €" oder "202 km" verstehen */
@@ -633,14 +806,27 @@ function richtig(){
   plaetzchenRegen(plus===10?10:plus===5?5:3);return `<span class="ok">🍪 Super! +${plus} Plätzchen</span>`;
 }
 
+/* Wörter vergleichen: Leerzeichen, Satzzeichen am Ende und ein Artikel davor zählen nicht.
+   Bei gross=true muss die Groß-/Kleinschreibung stimmen (Rechtschreibübung). */
+const normWort=s=>s.normalize("NFC").replace(/[„“”"']/g,"").trim().replace(/\s+/g," ").replace(/[.!?,;:]+$/,"").replace(/^(der|die|das|den|dem|ein|eine)\s+/i,"");
+function wortStimmt(t,eingabe){const v=normWort(eingabe);
+  return t.txt.some(a=>t.gross?normWort(a)===v:normWort(a).toLowerCase()===v.toLowerCase());}
+
 /* 1. Fehler: nur Kohle · 2. Fehler: Tipp · 3. Fehler: Lösung mit Lösungsweg */
-function pruefeZahl(){
+function pruefeEingabe(){
   const inp=$("antwort"),fb=$("feedback");
   if(!inp||inp.disabled)return;
-  const v=parseNum(inp.value);
-  if(v===null){fb.innerHTML=`<span class="nein">Bitte gib eine Zahl ein.</span>`;return;}
   const t=runde.aufgaben[runde.nr];
-  if(Math.abs(v-t.a)<0.005){fb.innerHTML=richtig();inp.disabled=true;weiterKnopf(false);return;}
+  let stimmt;
+  if(t.txt){
+    if(!normWort(inp.value)){fb.innerHTML=`<span class="nein">Bitte schreib ein Wort.</span>`;return;}
+    stimmt=wortStimmt(t,inp.value);
+  }else{
+    const v=parseNum(inp.value);
+    if(v===null){fb.innerHTML=`<span class="nein">Bitte gib eine Zahl ein.</span>`;return;}
+    stimmt=Math.abs(v-t.a)<0.005;
+  }
+  if(stimmt){fb.innerHTML=richtig();inp.disabled=true;weiterKnopf(false);return;}
   runde.versuche++;kohle();
   if(runde.versuche<3){fb.innerHTML=`<span class="nein">${kohleText[runde.versuche-1]}</span>${runde.versuche===2?tippText(t):""}`;inp.value="";inp.focus();return;}
   fb.innerHTML=`<span class="nein">🪨 Nur Kohle! Die richtige Antwort ist ${t.d||fmt(t.a)}.</span>${t.e&&!t.lw?`<span class="tipp">💡 ${t.e}</span>`:""}`;
@@ -660,7 +846,7 @@ function pruefeWahl(btn,i){
 function weiterKnopf(lwOffen){
   const t=runde.aufgaben[runde.nr];
   $("knoepfe").innerHTML=(t.lw?`<button class="knopf blau" onclick="lwUmschalten()">📝 Lösungsweg</button>`:"")+`<button class="knopf gruen" id="weiter" onclick="naechsteAufgabe()">Weiter ➡️</button>`;
-  if(t.lw){const d=document.createElement("div");d.id="lw";d.className="lw";d.innerHTML=`<div class="lwtitel">So rechnest du:</div>${t.lw}`;d.hidden=!lwOffen;$("feedback").after(d);}
+  if(t.lw){const d=document.createElement("div");d.id="lw";d.className="lw";d.innerHTML=`<div class="lwtitel">${fach==="deutsch"?"So findest du die Lösung:":"So rechnest du:"}</div>${t.lw}`;d.hidden=!lwOffen;$("feedback").after(d);}
   $("weiter").focus();
 }
 function lwUmschalten(){const d=$("lw");if(d)d.hidden=!d.hidden;}
@@ -807,9 +993,9 @@ function baumAntippen(){
 }
 function bescherung(){
   let neu="";
-  if(spiel.plaetzchen>spiel.rekord){spiel.rekord=spiel.plaetzchen;speicher.schreiben(SPEICHER.rekord,spiel.rekord);neu=`<p class="ok">🌟 NEUER REKORD! 🌟</p>`;}
+  if(spiel.plaetzchen>spiel.rekord){spiel.rekord=spiel.plaetzchen;speicher.schreiben(FAECHER[fach].rekord,spiel.rekord);neu=`<p class="ok">🌟 NEUER REKORD! 🌟</p>`;}
   statsZeigen();plaetzchenRegen(24);
-  karteZeigen(`<div class="gross">🎁</div><p class="frage"><b>Frohe Weihnachten! Du hast alle Geschenke ausgepackt!</b></p>
+  karteZeigen(`<div class="gross">🎁</div><p class="frage"><b>Frohe Weihnachten! Du hast alle Geschenke im ${FAECHER[fach].name}-Dorf ausgepackt!</b></p>
     <div class="gross">🍪🎄⭐</div>
     <p class="frage">Du hast <b>${spiel.plaetzchen}</b> Plätzchen gesammelt${spiel.bonus?`,<br>davon ${spiel.bonus} aus den Minispielen`:""}.</p>
     ${neu}<p>Dein Rekord: <b>${spiel.rekord}</b> Plätzchen</p>
@@ -822,19 +1008,31 @@ function bescherung(){
 function neuesSpiel(sicher){
   if(!sicher&&anzahlFertig()>0){
     karteZeigen(`<div class="gross">🔄</div><p class="frage"><b>Wirklich neu anfangen?</b></p>
-      <p>Die Haken bei ${anzahlFertig()} ${anzahlFertig()>1?"Häusern":"Haus"} und deine ${spiel.plaetzchen} Plätzchen werden gelöscht. Dein Rekord bleibt.</p>
+      <p>Im ${FAECHER[fach].name}-Dorf werden die Haken bei ${anzahlFertig()} ${anzahlFertig()>1?"Häusern":"Haus"} und deine ${spiel.plaetzchen} Plätzchen gelöscht. Dein Rekord und das andere Fach bleiben.</p>
       <button class="knopf" onclick="neuesSpiel(true)">Ja, neu anfangen</button><button class="knopf gruen" onclick="karteSchliessen()">Weiterspielen</button>`);return;}
-  Object.assign(spiel,{plaetzchen:0,bonus:0,fertig:[]});speicher.loeschen(SPEICHER.stand);karteSchliessen();
+  Object.assign(spiel,{plaetzchen:0,bonus:0,fertig:[]});speicher.loeschen(FAECHER[fach].stand);karteSchliessen();
   figur.x=START[0];figur.y=START[1];figurSetzen();karteZeichnen();
 }
 
-const geladen=standLaden();
-schneeErzeugen();karteZeichnen();figurSetzen();
-if(geladen&&anzahlFertig()>0){
-  karteZeigen(`<div class="gross">🎅</div><p class="frage"><b>Willkommen zurück!</b></p>
-    <p>${anzahlFertig()} von ${HAEUSER.length} Häusern haben schon einen Haken ✅<br>und du hast ${spiel.plaetzchen} Plätzchen 🍪 gesammelt.</p>
-    <button class="knopf gruen" onclick="karteSchliessen()">Weiterspielen</button><button class="knopf" onclick="neuesSpiel(true)">Neu anfangen</button>`);
+/* Fach wählen: lädt Aufgaben, Spielstand und Rekord dieses Fachs */
+function fachWaehlen(f){
+  if(figur.unterwegs)return;
+  if(!FAECHER[f])f="mathe";
+  fach=f;HAEUSER=FAECHER[f].haeuser;speicher.schreiben(SPEICHER.fach,f);
+  Object.assign(spiel,{plaetzchen:0,bonus:0,fertig:[]});
+  const geladen=standLaden();
+  spiel.rekord=parseInt(speicher.lesen(FAECHER[f].rekord)||"0",10)||0;
+  document.querySelectorAll(".fachwahl button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.fach===f)));
+  figur.x=START[0];figur.y=START[1];figurSetzen();karteZeichnen();
+  if(geladen&&anzahlFertig()>0){
+    karteZeigen(`<div class="gross">🎅</div><p class="frage"><b>Willkommen zurück im ${FAECHER[f].name}-Dorf!</b></p>
+      <p>${anzahlFertig()} von ${HAEUSER.length} Häusern haben schon einen Haken ✅<br>und du hast ${spiel.plaetzchen} Plätzchen 🍪 gesammelt.</p>
+      <button class="knopf gruen" onclick="karteSchliessen()">Weiterspielen</button><button class="knopf" onclick="neuesSpiel(true)">Neu anfangen</button>`);
+  }
 }
+
+schneeErzeugen();
+fachWaehlen(speicher.lesen(SPEICHER.fach)||"mathe");
 </script>
 </body>
 </html>
